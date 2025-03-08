@@ -20,14 +20,14 @@ typedef volatile PortStruct *const Port;
 inline Port getAddrFromPort(volatile uint8_t* portRegister){
 	return (Port)(portRegister-2);
 }
-void portConfigInput( volatile uint8_t* portaddress,uint8_t pin){
+inline void portConfigInput( volatile uint8_t* portaddress,uint8_t pin){
 	Port port = getAddrFromPort(portaddress);
 	CLEAR_BIT(port->PORTx,pin);
 	CLEAR_BIT(port->DDRx,pin);
 	return;
 }
 
-void portConfigOutput( volatile uint8_t* portaddress,uint8_t pin){
+inline void portConfigOutput( volatile uint8_t* portaddress,uint8_t pin){
 	Port port = getAddrFromPort(portaddress);
 	CLEAR_BIT(port->PORTx,pin);
 	SET_BIT(port->DDRx,pin);
@@ -46,11 +46,11 @@ inline void portWritePin( volatile uint8_t* portaddress,uint8_t pin,bool value){
 	return;
 }
 
-inline uint8_t portRead( volatile uint8_t* portaddress){
+inline volatile uint8_t portRead( volatile uint8_t* portaddress){
 	Port port = getAddrFromPort(portaddress);
 	return port->PORTx;
 }
-inline bool portReadPin( volatile uint8_t* portaddress,uint8_t pin){
+inline volatile bool portReadPin( volatile uint8_t* portaddress,uint8_t pin){
 	Port port = getAddrFromPort(portaddress);
 	return READ_BIT(port->PORTx,pin);
 }

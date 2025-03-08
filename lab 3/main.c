@@ -163,20 +163,15 @@ void Command(void)					//command interpreter
 }
 #include "portapi.h"
 #include "delay.h"
+#include "LCD.h"
+#inlcude "animate.h"
 int main(void)
 {
-	Mega328P_Init();
-	Banner();
+	LCDInit();	
+	animate("this");
 	portConfigOutput(&PORTC,5);
-	while(true){
-	portWritePin(&PORTC,5,1);
-	delayMicroseconds(50);
-	portWritePin(&PORTC,5,0);
-	}
-	
-	//while (1)
-	//{
-		//Command();				//infinite command loop
-	//}
+	portWrite(&PORTC,(1<<5));
+	portWrite(&PORTC,0);
+
 	getAddrFromPort(&PORTC);
 }
