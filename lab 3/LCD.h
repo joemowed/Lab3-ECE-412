@@ -19,9 +19,9 @@
 #define LCD_LATCH_PIN 2
 #define LCD_LATCH_PORT PORTB
 //microseconds, used for return home and clear display
-#define LCD_LONG_DELAY 3800
+#define LCD_LONG_DELAY 1600
 //microseconds, used for all other LCD instructions
-#define LCD_DELAY 4000
+#define LCD_SHORT_DELAY 40
 void LCDWriteData(uint8_t data);
 void LCDWriteCommand(uint8_t data);
 void LCDClear();

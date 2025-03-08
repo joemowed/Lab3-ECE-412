@@ -21,19 +21,24 @@ inline void writeTimerRegisterWord(volatile uint8_t*lowByte, uint16_t value){
 	*lowByte = (uint8_t)(value & 0xFF);
 	SREG = sreg;
 }
+inline void resetCount(volatile uint8_t*CTRLB){
+	volatile uint8_t* TCNTL = (CTRLB+4);
+	writeTimerRegisterWord(TCNTL,0x0);
+}
 inline void setupTimerForDelay(volatile uint8_t* CTRLB,volatile uint8_t*timerISRMSK,uint16_t compare){
-	*CTRLB = 0x0; //disable the timer if it isn't already
 	volatile uint8_t* CTRLA = (CTRLB-1);
 	*CTRLA = 0x0; //reset state
+	resetCount(CTRLB);
 	volatile uint8_t* OCRAL = (CTRLA+8);
 	writeTimerRegisterWord(OCRAL,compare);
 	*timerISRMSK = (1<<OCIE1A);//enable only the a compare interrupt
 }
 inline uint16_t microsecondsToPeriodCount(uint16_t value){
 	const uint16_t minMicroseconds = 8; //The time it takes for delayMicroseconds to operate,if the interrupt triggers instantly
-	if(value < minMicroseconds){
-		return 1;
-	}
+	//The below codes makes the timer sometimes run to the full counter duration (4090us)
+	//if(value < minMicroseconds){
+		//return 1U;
+	//}
 	if(value > 4090){ //~4090 is max for 16bit timer at 16mhz
 		return UINT16_MAX;
 	}

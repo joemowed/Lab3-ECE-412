@@ -10,8 +10,6 @@
 #define ANIMATE_H_
 #include "font.h"
 #define ANIMATE_BUFFER_SIZE 20 // buffer size in chars
-decompressFont();
-void animate(uint8_t*str);
 
 
 

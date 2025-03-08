@@ -1,20 +1,20 @@
 
- // Lab3P1.c
- //
- // 
- // Author : Eugene Rockey
- // 
- 
- //
- 
- const char MS1[] = "\r\nECE-412 ATMega328PB Tiny OS";
- const char MS2[] = "\r\nby Eugene Rockey Copyright 2022, All Rights Reserved";
- const char MS3[] = "\r\nMenu: (L)CD, (A)DC, (E)EPROM\r\n";
- const char MS4[] = "\r\nReady: ";
- const char MS5[] = "\r\nInvalid Command Try Again...";
- const char MS6[] = "Volts\r";
- 
- 
+// Lab3P1.c
+//
+//
+// Author : Eugene Rockey
+//
+
+//
+
+const char MS1[] = "\r\nECE-412 ATMega328PB Tiny OS";
+const char MS2[] = "\r\nby Eugene Rockey Copyright 2022, All Rights Reserved";
+const char MS3[] = "\r\nMenu: (L)CD, (A)DC, (E)EPROM\r\n";
+const char MS4[] = "\r\nReady: ";
+const char MS5[] = "\r\nInvalid Command Try Again...";
+const char MS6[] = "Volts\r";
+
+
 
 void LCD_Init(void);			//external Assembly functions
 void UART_Init(void);
@@ -82,7 +82,7 @@ void LCD(void)						//Lite LCD demo
 	LCD_Write_Command();
 	LCD_Puts("Hello ECE412!");
 	/*
-	Re-engineer this subroutine to have the LCD endlessly scroll a marquee sign of 
+	Re-engineer this subroutine to have the LCD endlessly scroll a marquee sign of
 	your Team's name either vertically or horizontally. Any key press should stop
 	the scrolling and return execution to the command line in Terminal. User must
 	always be able to return to command line.
@@ -109,10 +109,10 @@ void ADC(void)						//Lite Demo of the Analog to Digital Converter
 	UART_Puts(volts);
 	UART_Puts(MS6);
 	/*
-		Re-engineer this subroutine to display temperature in degrees Fahrenheit on the Terminal.
-		The potentiometer simulates a thermistor, its varying resistance simulates the
-		varying resistance of a thermistor as it is heated and cooled. See the thermistor
-		equations in the lab 3 folder. User must always be able to return to command line.
+	Re-engineer this subroutine to display temperature in degrees Fahrenheit on the Terminal.
+	The potentiometer simulates a thermistor, its varying resistance simulates the
+	varying resistance of a thermistor as it is heated and cooled. See the thermistor
+	equations in the lab 3 folder. User must always be able to return to command line.
 	*/
 	
 }
@@ -139,7 +139,7 @@ void EEPROM(void)
 void Command(void)					//command interpreter
 {
 	UART_Puts(MS3);
-	ASCII = '\0';						
+	ASCII = '\0';
 	while (ASCII == '\0')
 	{
 		UART_Get();
@@ -155,23 +155,49 @@ void Command(void)					//command interpreter
 		default:
 		UART_Puts(MS5);
 		HELP();
-		break;  			
-//Add a 'USART' command and subroutine to allow the user to reconfigure the 						
-//serial port parameters during runtime. Modify baud rate, # of data bits, parity, 							
-//# of stop bits.
+		break;
+		//Add a 'USART' command and subroutine to allow the user to reconfigure the
+		//serial port parameters during runtime. Modify baud rate, # of data bits, parity,
+		//# of stop bits.
 	}
 }
 #include "portapi.h"
 #include "delay.h"
 #include "LCD.h"
-#inlcude "animate.h"
+#include "font.h"
+void loadw(uint8_t index,uint8_t i){
+	LCDWriteCustomChar(&(fontArray[i+index]),index);
+	LCDWriteData(index);
+}
+void bigDelay(int i ){
+	for(int ii =0;ii<i;ii++){
+		delayMicroseconds(4090);
+	}
+}
+void custPuts(uint8_t*str){
+
+uint8_t curChar = *str;
+int i =0;
+	while(curChar!=0){
+		LCDWriteCustomChar(getFontChar(curChar),i);
+		curChar = *(++str);
+		i++;
+	}	
+	LCDCursorHome();
+	LCDClear();
+	for(uint8_t writer=0;writer<i;writer++){
+		LCDWriteData(writer);
+	}
+}
 int main(void)
 {
-	LCDInit();	
-	animate("this");
+	decompressFont();
+	LCDInit();
 	portConfigOutput(&PORTC,5);
-	portWrite(&PORTC,(1<<5));
-	portWrite(&PORTC,0);
-
-	getAddrFromPort(&PORTC);
+	portWritePin(&PORTC,5,0);
+	while(1){
+	portWritePin(&PORTC,5,1);
+	custPuts("A String");
+	portWritePin(&PORTC,5,0);
+		}
 }

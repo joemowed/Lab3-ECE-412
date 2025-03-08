@@ -17,11 +17,11 @@ struct LCDConfig LCDConfig={
 .is2LineMode = 0,
 .is5x11Font = 0,
 } ;
-void LCDLatchData(){
+inline void LCDLatchData(){
 	portWritePin(&LCD_LATCH_PORT,LCD_LATCH_PIN,1);
-	delayMicroseconds(1);
+	//values lower than 9 do not currently work with the delayMicroseconds function.
+	delayMicroseconds(9);
 	portWritePin(&LCD_LATCH_PORT,LCD_LATCH_PIN,0);
-	delayMicroseconds(1);
 }
 void LCDRegSelect(bool isData){
 	if(isData){
@@ -35,21 +35,29 @@ void LCDCursorHome(){
 	LCDWriteCommand(0x2);
 	delayMicroseconds(LCD_LONG_DELAY);
 }
-void LCDWriteData(uint8_t data){
+inline void LCDWriteData(uint8_t data){
 	portWritePin(&LCD_REG_SELECT_PORT,LCD_REG_SELECT_PIN,1);
 	portWrite(&LCD_DATA_PORT,data);
 	LCDLatchData();
-	delayMicroseconds(LCD_DELAY);
+	delayMicroseconds(LCD_SHORT_DELAY);
+	LCDZeroOutputs();
 }
-void LCDWriteCommand(uint8_t data){
+inline void LCDWriteCommand(uint8_t data){
 	portWritePin(&LCD_REG_SELECT_PORT,LCD_REG_SELECT_PIN,0);
 	portWrite(&LCD_DATA_PORT,data);
 	LCDLatchData();
-	delayMicroseconds(LCD_DELAY);
+	delayMicroseconds(LCD_SHORT_DELAY);
+	LCDZeroOutputs();
 }
 void LCDClear(){
 	LCDWriteCommand(0x1);
 	delayMicroseconds(LCD_LONG_DELAY);
+}
+inline void LCDZeroOutputs(){
+	portWritePin(&LCD_RW_PORT,LCD_RW_PIN,0);
+	portWritePin(&LCD_LATCH_PORT,LCD_LATCH_PIN,0);
+	portWritePin(&LCD_REG_SELECT_PORT,LCD_REG_SELECT_PIN,0);
+	portWrite(&LCD_DATA_PORT,0x0);
 }
 void LCDInit(){
 	//configurePins
@@ -59,10 +67,7 @@ void LCDInit(){
 	portConfigOutput(&LCD_LATCH_PORT,LCD_LATCH_PIN);
 	portConfigOutput(&LCD_REG_SELECT_PORT,LCD_REG_SELECT_PIN);
 	portConfigOutput(&LCD_RW_PORT,LCD_RW_PIN);//needs to be low for duration of LCD usage
-	portWritePin(&LCD_RW_PORT,LCD_RW_PIN,0);
-	portWritePin(&LCD_LATCH_PORT,LCD_LATCH_PIN,0);
-	portWritePin(&LCD_REG_SELECT_PORT,LCD_REG_SELECT_PIN,0);
-	portWrite(&LCD_DATA_PORT,0x0);
+	LCDZeroOutputs();
 	//function set
 	uint8_t tmp = ((1<<5)|(LCDConfig.is8BitData<<4)|(LCDConfig.is2LineMode<<3)|(LCDConfig.is5x11Font<<2));
 	LCDWriteCommand(tmp);
@@ -77,12 +82,10 @@ void LCDInit(){
 	LCDClear();
 	LCDCursorHome();
 }
-		
 void LCDWriteCustomChar(CustomChar*customChar,uint8_t addr){
 	addr = (1<<6 )|(addr<<3);//"Set CGRAM address" from datasheet
 	LCDWriteCommand(addr);
 	for(uint8_t i =0;i<8;i++){
 		LCDWriteData(customChar->lines[i]);
 	}
-	LCDCursorHome();
 }
