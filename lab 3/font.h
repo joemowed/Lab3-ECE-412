@@ -11,11 +11,11 @@
 
 
 #include "LCD.h"
-#define FONT_CHAR_COUNT 95
+#define FONT_CHAR_COUNT 62
 CustomChar fontArray[FONT_CHAR_COUNT];
 void decompressFont();
 inline CustomChar* getFontChar(uint8_t character){
-	return &(fontArray[(character-0x20)]);
+	return &(fontArray[(character-65)]);
 }
 
 

@@ -197,7 +197,7 @@ int main(void)
 	portWritePin(&PORTC,5,0);
 	while(1){
 	portWritePin(&PORTC,5,1);
-	custPuts("A String");
+	animate("Team Name");
 	portWritePin(&PORTC,5,0);
 		}
 }
