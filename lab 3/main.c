@@ -14,9 +14,7 @@ const char MS4[] = "\r\nReady: ";
 const char MS5[] = "\r\nInvalid Command Try Again...";
 const char MS6[] = "Volts\r";
 
-
-
-void LCD_Init(void);			//external Assembly functions
+void LCD_Init(void); // external Assembly functions
 void UART_Init(void);
 void UART_Clear(void);
 void UART_Get(void);
@@ -29,15 +27,15 @@ void ADC_Get(void);
 void EEPROM_Read(void);
 void EEPROM_Write(void);
 
-unsigned char ASCII;			//shared I/O variable with Assembly
-unsigned char DATA;				//shared internal variable with Assembly
-char HADC;						//shared ADC variable with Assembly
-char LADC;						//shared ADC variable with Assembly
+unsigned char ASCII; // shared I/O variable with Assembly
+unsigned char DATA;	 // shared internal variable with Assembly
+char HADC;			 // shared ADC variable with Assembly
+char LADC;			 // shared ADC variable with Assembly
 
-char volts[5];					//string buffer for ADC output
-int Acc;						//Accumulator for ADC use
+char volts[5]; // string buffer for ADC output
+int Acc;	   // Accumulator for ADC use
 
-void UART_Puts(const char *str)	//Display a string in the PC Terminal Program
+void UART_Puts(const char *str) // Display a string in the PC Terminal Program
 {
 	while (*str)
 	{
@@ -46,7 +44,7 @@ void UART_Puts(const char *str)	//Display a string in the PC Terminal Program
 	}
 }
 
-void LCD_Puts(const char *str)	//Display a string on the LCD Module
+void LCD_Puts(const char *str) // Display a string on the LCD Module
 {
 	while (*str)
 	{
@@ -55,30 +53,29 @@ void LCD_Puts(const char *str)	//Display a string on the LCD Module
 	}
 }
 
-
-void Banner(void)				//Display Tiny OS Banner on Terminal
+void Banner(void) // Display Tiny OS Banner on Terminal
 {
 	UART_Puts(MS1);
 	UART_Puts(MS2);
 	UART_Puts(MS4);
 }
 
-void HELP(void)						//Display available Tiny OS Commands on Terminal
+void HELP(void) // Display available Tiny OS Commands on Terminal
 {
 	UART_Puts(MS3);
 }
 
-void LCD(void)						//Lite LCD demo
+void LCD(void) // Lite LCD demo
 {
-	DATA = 0x34;					//Student Comment Here
+	DATA = 0x34; // Student Comment Here
 	LCD_Write_Command();
-	DATA = 0x08;					//Student Comment Here
+	DATA = 0x08; // Student Comment Here
 	LCD_Write_Command();
-	DATA = 0x02;					//Student Comment Here
+	DATA = 0x02; // Student Comment Here
 	LCD_Write_Command();
-	DATA = 0x06;					//Student Comment Here
+	DATA = 0x06; // Student Comment Here
 	LCD_Write_Command();
-	DATA = 0x0f;					//Student Comment Here
+	DATA = 0x0f; // Student Comment Here
 	LCD_Write_Command();
 	LCD_Puts("Hello ECE412!");
 	/*
@@ -89,18 +86,19 @@ void LCD(void)						//Lite LCD demo
 	*/
 }
 
-void ADC(void)						//Lite Demo of the Analog to Digital Converter
+void ADC(void) // Lite Demo of the Analog to Digital Converter
 {
-	volts[0x1]='.';
-	volts[0x3]=' ';
-	volts[0x4]= 0;
+	volts[0x1] = '.';
+	volts[0x3] = ' ';
+	volts[0x4] = 0;
 	ADC_Get();
-	Acc = (((int)HADC) * 0x100 + (int)(LADC))*0xA;
+	Acc = (((int)HADC) * 0x100 + (int)(LADC)) * 0xA;
 	volts[0x0] = 48 + (Acc / 0x7FE);
 	Acc = Acc % 0x7FE;
-	volts[0x2] = ((Acc *0xA) / 0x7FE) + 48;
+	volts[0x2] = ((Acc * 0xA) / 0x7FE) + 48;
 	Acc = (Acc * 0xA) % 0x7FE;
-	if (Acc >= 0x3FF) volts[0x2]++;
+	if (Acc >= 0x3FF)
+		volts[0x2]++;
 	if (volts[0x2] == 58)
 	{
 		volts[0x2] = 48;
@@ -114,7 +112,6 @@ void ADC(void)						//Lite Demo of the Analog to Digital Converter
 	varying resistance of a thermistor as it is heated and cooled. See the thermistor
 	equations in the lab 3 folder. User must always be able to return to command line.
 	*/
-	
 }
 
 void EEPROM(void)
@@ -135,8 +132,7 @@ void EEPROM(void)
 	UART_Puts("\r\n");
 }
 
-
-void Command(void)					//command interpreter
+void Command(void) // command interpreter
 {
 	UART_Puts(MS3);
 	ASCII = '\0';
@@ -146,56 +142,64 @@ void Command(void)					//command interpreter
 	}
 	switch (ASCII)
 	{
-		case 'L' | 'l': LCD();
+	case 'L' | 'l':
+		LCD();
 		break;
-		case 'A' | 'a': ADC();
+	case 'A' | 'a':
+		ADC();
 		break;
-		case 'E' | 'e': EEPROM();
+	case 'E' | 'e':
+		EEPROM();
 		break;
-		default:
+	default:
 		UART_Puts(MS5);
 		HELP();
 		break;
-		//Add a 'USART' command and subroutine to allow the user to reconfigure the
-		//serial port parameters during runtime. Modify baud rate, # of data bits, parity,
-		//# of stop bits.
+		// Add a 'USART' command and subroutine to allow the user to reconfigure the
+		// serial port parameters during runtime. Modify baud rate, # of data bits, parity,
+		// # of stop bits.
 	}
 }
 #include "portapi.h"
 #include "delay.h"
 #include "LCD.h"
 #include "font.h"
-void loadw(uint8_t index,uint8_t i){
-	LCDWriteCustomChar(&(fontArray[i+index]),index);
+void loadw(uint8_t index, uint8_t i)
+{
+	LCDWriteCustomChar(&(fontArray[i + index]), index);
 	LCDWriteData(index);
 }
-void bigDelay(int i ){
-	for(int ii =0;ii<i;ii++){
+void bigDelay(int i)
+{
+	for (int ii = 0; ii < i; ii++)
+	{
 		delayMicroseconds(4090);
 	}
 }
-void custPuts(uint8_t*str){
+void custPuts(uint8_t *str)
+{
 
 	uint8_t curChar = *str;
-	int i =0;
-	while(curChar!=0){
-		LCDWriteCustomChar(getFontChar(curChar),i);
+	int i = 0;
+	while (curChar != 0)
+	{
+		LCDWriteCustomChar(getFontChar(curChar), i);
 		curChar = *(++str);
 		i++;
 	}
 	LCDCursorHome();
 	LCDClear();
-	for(uint8_t writer=0;writer<i;writer++){
+	for (uint8_t writer = 0; writer < i; writer++)
+	{
 		LCDWriteData(writer);
 	}
 }
 int main(void)
 {
-	portConfigOutput(&PORTC,5);
-	portWritePin(&PORTC,5,0);
-	while(1){
-		portWritePin(&PORTC,5,1);
-		animate("Team Name");
-		portWritePin(&PORTC,5,0);
+	portConfigOutput(&PORTC, 5);
+	portWritePin(&PORTC, 5, 0);
+	while (1)
+	{
+		animate("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 	}
 }

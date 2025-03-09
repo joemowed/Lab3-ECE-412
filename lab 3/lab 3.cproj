@@ -167,9 +167,6 @@
     <Compile Include="regAPI.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="scroll.c">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="delay.h">
       <SubType>compile</SubType>
     </Compile>
