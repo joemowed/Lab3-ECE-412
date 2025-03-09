@@ -30,6 +30,7 @@ void loadCharInit(uint8_t curChar){
 		pixelBuffer[i][drawLength] = (customChar->lines[i]);
 	}
 	drawLength++;
+	animateShift();//add a 1 pixel gap after each char in the pixelBuffer
 }
 //helper function for animateShift
 void animateShiftRow(uint8_t*rowStart){
@@ -63,7 +64,7 @@ void drawFrame(){
 		CustomChar curChar = generateCustomChar(i);
 		LCDWriteCustomChar(&curChar,i);
 	}
-//	LCDCursorHome();
+	//	LCDCursorHome();
 	LCDClear();
 	for(uint8_t i = 0;i<8;i++){
 		LCDWriteData(i);
@@ -89,6 +90,8 @@ void animateDelay(){
 }
 void animate(const uint8_t*str){
 	if(!isInitialized){
+	decompressFont();
+	LCDInit();
 		animateInit(str);
 	}
 	drawFrame();

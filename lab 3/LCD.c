@@ -8,14 +8,14 @@
 #include "portAPI.h"
 #include "delay.h"
 struct LCDConfig LCDConfig={
-.isCursorIncrement =1,
-.isDisplayShift = 0,
-.isDisplayOn = 1,
-.isCursorOn = 0,
-.isCursorBlinkOn = 0,
-.is8BitData = 1,
-.is2LineMode = 0,
-.is5x11Font = 0,
+	.isCursorIncrement =1,
+	.isDisplayShift = 0,
+	.isDisplayOn = 1,
+	.isCursorOn = 0,
+	.isCursorBlinkOn = 0,
+	.is8BitData = 1,
+	.is2LineMode = 0,
+	.is5x11Font = 0,
 } ;
 inline void LCDLatchData(){
 	portWritePin(&LCD_LATCH_PORT,LCD_LATCH_PIN,1);

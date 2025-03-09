@@ -176,13 +176,13 @@ void bigDelay(int i ){
 }
 void custPuts(uint8_t*str){
 
-uint8_t curChar = *str;
-int i =0;
+	uint8_t curChar = *str;
+	int i =0;
 	while(curChar!=0){
 		LCDWriteCustomChar(getFontChar(curChar),i);
 		curChar = *(++str);
 		i++;
-	}	
+	}
 	LCDCursorHome();
 	LCDClear();
 	for(uint8_t writer=0;writer<i;writer++){
@@ -191,13 +191,11 @@ int i =0;
 }
 int main(void)
 {
-	decompressFont();
-	LCDInit();
 	portConfigOutput(&PORTC,5);
 	portWritePin(&PORTC,5,0);
 	while(1){
-	portWritePin(&PORTC,5,1);
-	animate("Team Name");
-	portWritePin(&PORTC,5,0);
-		}
+		portWritePin(&PORTC,5,1);
+		animate("Team Name");
+		portWritePin(&PORTC,5,0);
+	}
 }

@@ -1,12 +1,12 @@
 /*
- * delay.c
- *
- * Created: 3/8/2025 12:23:33 AM
- *  Author: Joe Maloney
- */ 
- #include "delay.h"
- #include <avr/interrupt.h>
- #include <stdbool.h>
+* delay.c
+*
+* Created: 3/8/2025 12:23:33 AM
+*  Author: Joe Maloney
+*/
+#include "delay.h"
+#include <avr/interrupt.h>
+#include <stdbool.h>
 volatile bool waitFlagForDelay = false;
 ISR(DELAY_ISR_HANDLE,ISR_BLOCK){
 	waitFlagForDelay = true;
@@ -37,7 +37,7 @@ inline uint16_t microsecondsToPeriodCount(uint16_t value){
 	const uint16_t minMicroseconds = 8; //The time it takes for delayMicroseconds to operate,if the interrupt triggers instantly
 	//The below codes makes the timer sometimes run to the full counter duration (4090us)
 	//if(value < minMicroseconds){
-		//return 1U;
+	//return 1U;
 	//}
 	if(value > 4090){ //~4090 is max for 16bit timer at 16mhz
 		return UINT16_MAX;
