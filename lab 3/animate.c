@@ -24,17 +24,6 @@ bool LSLCarry(uint8_t *value, bool carryIn)
 	*value |= carryIn;
 	return ret;
 }
-// loads a CustomChar into the pixelBuffer
-void loadCharInit(uint8_t curChar)
-{
-	const CustomChar *customChar = getFontChar(curChar);
-	for (uint8_t i = 0; i < 8; i++)
-	{
-		pixelBuffer[i][drawLength] = (customChar->lines[i]);
-	}
-	drawLength++;
-	animateShift(); // add a 1 pixel gap after each char in the pixelBuffer
-}
 // helper function for animateShift
 void animateShiftRow(uint8_t *rowStart)
 {
@@ -55,6 +44,17 @@ void animateShift()
 		uint8_t *row = pixelBuffer[i];
 		animateShiftRow(row);
 	}
+}
+// loads a CustomChar into the pixelBuffer
+void loadCharInit(uint8_t curChar)
+{
+	const CustomChar *customChar = getFontChar(curChar);
+	for (uint8_t i = 0; i < 8; i++)
+	{
+		pixelBuffer[i][drawLength] = (customChar->lines[i]);
+	}
+	drawLength++;
+	animateShift(); // add a 1 pixel gap after each char in the pixelBuffer
 }
 // charStart: pointer to first byte of character in pixelBuffer
 // return: a CustomChar object made by reading from charStart to charStart+7 in pixelBuffer
