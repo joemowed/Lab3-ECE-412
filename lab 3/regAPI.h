@@ -9,7 +9,8 @@
 #define REGAPI_H_
 
 #define SET_BIT(reg, bitPos) ((reg) |= (1 << (bitPos)))
-#define SET_BIT_VALUE(reg, bitPos, value) ((reg) ^= (((-value) ^ (reg)) & (1 << (bitPos))))
+#define SET_BIT_VALUE(reg, bitPos, value) \
+  ((reg) ^= (((-value) ^ (reg)) & (1 << (bitPos))))
 #define READ_BIT(reg, bitPos) ((reg) & (1 << (bitPos)))
 #define CLEAR_BIT(reg, bitPos) ((reg) &= (~(1 << (bitPos))))
 

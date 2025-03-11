@@ -8,8 +8,8 @@
 #ifndef LCD_H_
 #define LCD_H_
 #include <avr/io.h>
-#include <stdint-gcc.h>
 #include <stdbool.h>
+#include <stdint-gcc.h>
 #define LCD_DATA_PORT PORTD
 #define LCD_REG_SELECT_PIN 1
 #define LCD_REG_SELECT_PORT PORTB
@@ -26,23 +26,21 @@ void LCDWriteCommand(uint8_t data);
 void LCDClear();
 // turns display on, cursor off
 void LCDInit();
-typedef struct CustomCharStruct
-{
-	uint8_t lines[8];
+typedef struct CustomCharStruct {
+  uint8_t lines[8];
 } CustomChar;
 // use numbers 0-7 as addresses
 void LCDWriteCustomChar(CustomChar *custChar, uint8_t addr);
 void LCDCursorHome();
-struct LCDConfig
-{
-	bool isCursorIncrement;
-	bool isDisplayShift;
-	bool isDisplayOn;
-	bool isCursorOn;
-	bool isCursorBlinkOn;
-	bool is8BitData;
-	bool is2LineMode;
-	bool is5x11Font;
+struct LCDConfig {
+  bool isCursorIncrement;
+  bool isDisplayShift;
+  bool isDisplayOn;
+  bool isCursorOn;
+  bool isCursorBlinkOn;
+  bool is8BitData;
+  bool is2LineMode;
+  bool is5x11Font;
 };
 
 #endif /* LCD_H_ */
