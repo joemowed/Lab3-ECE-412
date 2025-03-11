@@ -7,40 +7,73 @@
 
 #ifndef LCD_H_
 #define LCD_H_
-#include <avr/io.h>
-#include <stdbool.h>
-#include <stdint-gcc.h>
-#define LCD_DATA_PORT PORTD
-#define LCD_REG_SELECT_PIN 1
-#define LCD_REG_SELECT_PORT PORTB
-#define LCD_RW_PIN 0
-#define LCD_RW_PORT PORTB
-#define LCD_LATCH_PIN 2
-#define LCD_LATCH_PORT PORTB
-// microseconds, used for return home and clear display
-#define LCD_LONG_DELAY 1600
-// microseconds, used for all other LCD instructions
-#define LCD_SHORT_DELAY 40
+
+#include <avr/io.h>     //used in this file to define the ports below
+#include <stdbool.h>    //
+#include <stdint-gcc.h> //import the nessasary types for declarations
+
+#define LCD_DATA_PORT PORTD       // the port used for LCD data pins 0:7
+#define LCD_REG_SELECT_PIN 1      // the pin used for RS on the LCD
+#define LCD_REG_SELECT_PORT PORTB // the port associated with the RS pin
+#define LCD_RW_PIN 0              // the pin used for read/write on the LCD
+#define LCD_RW_PORT PORTB         // the port associated with the read/write pin
+#define LCD_LATCH_PIN 2           // the pin used for the LCD pin E
+#define LCD_LATCH_PORT PORTB      // the port associated with the E pin
+
+#define LCD_LONG_DELAY                                                         \
+    1600 // microseconds, used for return home and clear display
+
+#define LCD_SHORT_DELAY 40 // microseconds, used for all other LCD instructions
+
+// writes the given uint8_t to the LCD as data
 void LCDWriteData(uint8_t data);
+
+// writes the given uint8_t to the LCD as a command
 void LCDWriteCommand(uint8_t data);
+
+// sends the "Clear" command to the LCD
 void LCDClear();
-// turns display on, cursor off
+
+// enables and configures LCD as defined in the LCDConfigStruct
 void LCDInit();
+
+// typedef for a custom character.
+// on the 1602 LCD, custom chararcters are 5x8 pixels
+// we use bits 0:5 to define each row in a custom character
 typedef struct CustomCharStruct {
-  uint8_t lines[8];
+    uint8_t lines[8];
 } CustomChar;
-// use numbers 0-7 as addresses
+
+// writes a custom character to the LCD at the address specified, using
+// addresses 0-7, inclusive
 void LCDWriteCustomChar(CustomChar *custChar, uint8_t addr);
+
+// sends the cursor to 0,0 on the LCD
 void LCDCursorHome();
+
+// configuration for the LCD
+// This is used by the LCDInit() function to
+// configure the display
 struct LCDConfig {
-  bool isCursorIncrement;
-  bool isDisplayShift;
-  bool isDisplayOn;
-  bool isCursorOn;
-  bool isCursorBlinkOn;
-  bool is8BitData;
-  bool is2LineMode;
-  bool is5x11Font;
+    bool isCursorIncrement;
+
+    bool isDisplayShift;
+    bool isDisplayOn;
+    bool isCursorOn;
+    bool isCursorBlinkOn;
+    bool is8BitData;
+    bool is2LineMode;
+    bool is5x11Font;
+};
+struct LCDConfig LCDConfig = {
+    .isCursorIncrement = 1,
+    .isDisplayShift = 0,
+    .isDisplayOn = 1,
+    .isCursorOn = 0,
+    .isCursorBlinkOn = 0,
+    .is8BitData = 1,
+    .is2LineMode = 0,
+    .is5x11Font = 0,
 };
 
 #endif /* LCD_H_ */

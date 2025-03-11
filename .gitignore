@@ -2,3 +2,6 @@
 /.vs/
 /.VSCodeCounter
 /lab 3/Release
+/build
+/.cache
+/.clang-format

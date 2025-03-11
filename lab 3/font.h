@@ -9,7 +9,8 @@
 #define FONT_H_
 
 #include "LCD.h"
-void decompressFont();
+
+// returns a LCD compatible CustomChar, given a ascii character code
 CustomChar getFontChar(char curChar);
 
 #endif /* FONT_H_ */

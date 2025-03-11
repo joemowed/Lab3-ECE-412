@@ -8,10 +8,17 @@
 #ifndef REGAPI_H_
 #define REGAPI_H_
 
+// sets the bit at given position in the provided register
 #define SET_BIT(reg, bitPos) ((reg) |= (1 << (bitPos)))
-#define SET_BIT_VALUE(reg, bitPos, value) \
-  ((reg) ^= (((-value) ^ (reg)) & (1 << (bitPos))))
+
+// sets the bit at the given position to the given boolean value
+#define SET_BIT_VALUE(reg, bitPos, value)                                      \
+    ((reg) ^= (((-value) ^ (reg)) & (1 << (bitPos))))
+
+// reads the bit at given position in the provided register
 #define READ_BIT(reg, bitPos) ((reg) & (1 << (bitPos)))
+
+// clears the bit at given position in the provided register
 #define CLEAR_BIT(reg, bitPos) ((reg) &= (~(1 << (bitPos))))
 
 #endif /* REGAPI_H_ */
