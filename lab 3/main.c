@@ -161,39 +161,9 @@ void Command(void) // command interpreter
 	}
 }
 #include "portapi.h"
+#include "animate.h"
 #include "delay.h"
-#include "LCD.h"
-#include "font.h"
-void loadw(uint8_t index, uint8_t i)
-{
-	LCDWriteCustomChar(&(fontArray[i + index]), index);
-	LCDWriteData(index);
-}
-void bigDelay(int i)
-{
-	for (int ii = 0; ii < i; ii++)
-	{
-		delayMicroseconds(4090);
-	}
-}
-void custPuts(uint8_t *str)
-{
-
-	uint8_t curChar = *str;
-	int i = 0;
-	while (curChar != 0)
-	{
-		LCDWriteCustomChar(getFontChar(curChar), i);
-		curChar = *(++str);
-		i++;
-	}
-	LCDCursorHome();
-	LCDClear();
-	for (uint8_t writer = 0; writer < i; writer++)
-	{
-		LCDWriteData(writer);
-	}
-}
+#include "profiling.h"
 int main(void)
 {
 	portConfigOutput(&PORTC, 5);

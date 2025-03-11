@@ -14,6 +14,8 @@
 static bool isInitialized = false;
 static uint8_t pixelBuffer[8][ANIMATE_BUFFER_SIZE]; // 2d array, pixelBuffer[0:7] holds the rows of pixels to be sent to drawFrame
 static uint8_t drawLength = 0;
+static uint8_t gapDrawLength = 0;
+char errString[] = "Error: String too Large";
 // carryIn: value to be shifted into LSB of value
 // value: shifts this value 1 pos to the left and writes carryIn to LSB
 // return: The MSB of the initial value
@@ -47,15 +49,16 @@ void animateShift()
 }
 // loads a CustomChar into the pixelBuffer
 void incrementDrawLength(){
+	gapDrawLength = ((drawLength%8)==0)?(gapDrawLength+1):(gapDrawLength);
 	drawLength++;
 }
 void loadCharInit(uint8_t curChar)
 {
 	incrementDrawLength();
-	const CustomChar *customChar = getFontChar(curChar);
+	const CustomChar customChar = getFontChar(curChar);
 	for (uint8_t i = 0; i < 8; i++)
 	{
-		pixelBuffer[i][drawLength] = (customChar->lines[i]);
+		pixelBuffer[i][drawLength] = (customChar.lines[i]);
 	}
 	animateShift(); // add a 1 pixel gap after each char in the pixelBuffer
 }
@@ -80,23 +83,40 @@ void drawFrame()
 	}
 	//	LCDCursorHome();
 	LCDClear();
+	for(uint8_t i =0;i<3;i++){
+		LCDWriteData(' '); //center the 8 chars that make up our frame
+	}
 	for (uint8_t i = 0; i < 8; i++)
 	{
 		LCDWriteData(i);
 	}
 }
-void animateInit(const uint8_t *str)
+void animateInit(const char *str)
 {
 	isInitialized = true;
 	for (uint8_t i = 0; i < ANIMATE_SPACE_COUNT; i++)
 	{
 		loadCharInit(' ');
 	}
+	const char* tmp = str;
+	uint16_t i = 0;
+	while(*str != 0){
+	i++;
+	str++;
+	}
+	if(((i+ANIMATE_SPACE_COUNT)*9)>(ANIMATE_BUFFER_SIZE*8)){
+		str = errString;
+	}
+	else{
+		str=tmp;
+	}
+		
 	while (*str != 0)
 	{
 		loadCharInit(*str);
 		str++;
 	}
+	drawLength+=gapDrawLength;
 }
 void animateDelay()
 {
@@ -105,13 +125,14 @@ void animateDelay()
 		delayMicroseconds(4000);
 	}
 }
-void animate(const uint8_t *str)
+void animate(const char *str)
 {
 	if (!isInitialized)
 	{
-		decompressFont(); // takes 13.7ms
+	PINC=0xFF;
 		LCDInit();
 		animateInit(str);
+	PINC=0xFF;
 	}
 	drawFrame();	// takes 6.01ms
 	animateShift(); // takes 0.5ms when string length is 26

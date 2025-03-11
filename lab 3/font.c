@@ -9,23 +9,6 @@
 #include "regAPI.h"
 #include <stdint-gcc.h>
 
-CustomChar decompressChar(const uint8_t *compressedStart)
-{
-	CustomChar ret = {{0, 0, 0, 0, 0, 0, 0, 0}};
-	for (uint8_t currentCharacter = 0; currentCharacter < 5; currentCharacter++)
-	{
-		for (uint8_t curLine = 0; curLine < 8; curLine++)
-		{
-			volatile uint8_t msk = (READ_BIT(compressedStart[currentCharacter], curLine));
-			msk = (msk > 0);
-			msk <<= currentCharacter;
-			ret.lines[curLine] |= msk;
-		}
-	}
-	return ret;
-}
-void decompressFont()
-{
 	// WARNING: This Font is usable only with MikroE GLCD Lib.
 	//          X-GLCD Lib does not handle this font.
 
@@ -134,8 +117,24 @@ void decompressFont()
 		0x00, 0x01, 0x02, 0x01, 0x02, // Code for char ~
 
 	};
-	for (uint16_t i = 0; i < FONT_CHAR_COUNT; i++)
+CustomChar decompressChar(const uint8_t *compressedStart)
+{
+	CustomChar ret = {{0, 0, 0, 0, 0, 0, 0, 0}};
+	for (uint8_t currentCharacter = 0; currentCharacter < 5; currentCharacter++)
 	{
-		fontArray[i] = decompressChar(&(Terminal5x8[i * 5]));
+		for (uint8_t curLine = 0; curLine < 8; curLine++)
+		{
+			volatile uint8_t msk = (READ_BIT(compressedStart[currentCharacter], curLine));
+			msk = (msk > 0);
+			msk <<= currentCharacter;
+			ret.lines[curLine] |= msk;
+		}
 	}
+	return ret;
 }
+CustomChar getFontChar(char curChar){
+	uint16_t index = curChar -65;
+	index*=5;
+	return decompressChar(&Terminal5x8[index]);
+}
+

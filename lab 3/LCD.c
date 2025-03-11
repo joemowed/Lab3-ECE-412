@@ -20,10 +20,7 @@ struct LCDConfig LCDConfig = {
 inline void LCDLatchData()
 {
 	portWritePin(&LCD_LATCH_PORT, LCD_LATCH_PIN, 1);
-	portWritePin(&PORTC, 5, 1);
-	// values lower than 9 do not currently work with the delayMicroseconds function.
-	delayMicroseconds(25);
-	portWritePin(&PORTC, 5, 0);
+	delayMicroseconds(1);
 	portWritePin(&LCD_LATCH_PORT, LCD_LATCH_PIN, 0);
 }
 void LCDRegSelect(bool isData)

@@ -16,7 +16,7 @@ typedef struct PortStruct
 	volatile uint8_t DDRx;
 	volatile uint8_t PORTx;
 } PortStruct;
-typedef volatile PortStruct *const Port;
+typedef PortStruct * const Port;
 inline Port getAddrFromPort(volatile uint8_t *portRegister)
 {
 	return (Port)(portRegister - 2);
