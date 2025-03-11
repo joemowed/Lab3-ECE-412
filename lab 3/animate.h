@@ -7,9 +7,8 @@
 
 #ifndef ANIMATE_H_
 #define ANIMATE_H_
-#include "font.h"
 #define ANIMATE_BUFFER_SIZE \
-  90  // buffer size in chars, 8 (or less) chars are used for spaces on the
+  120  // buffer size in chars, 8 (or less) chars are used for spaces on the
       // marquee (e.g. 20-8= 16 char string max) Max value: 30
 #define ANIMATE_DELAY \
   30  // the total frame delay is this number * 4 (e.g. ANIMATE_DELAY =30, frame

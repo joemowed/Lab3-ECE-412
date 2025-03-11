@@ -14,9 +14,7 @@
 #include "font.h"
 #include "regAPI.h"
 static bool isInitialized = false;
-static uint8_t
-    pixelBuffer[8]
-               [ANIMATE_BUFFER_SIZE];  // 2d array, pixelBuffer[0:7] holds the
+static uint8_t pixelBuffer[8][ANIMATE_BUFFER_SIZE];  // 2d array, pixelBuffer[0:7] holds the
                                        // rows of pixels to be sent to drawFrame
 static uint8_t drawLength = 0;
 static uint8_t gapDrawLength = 0;

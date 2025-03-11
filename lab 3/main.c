@@ -160,10 +160,11 @@ void Command(void)  // command interpreter
 #include "delay.h"
 #include "portapi.h"
 #include "profiling.h"
+#include <avr/io.h>
 int main(void) {
   portConfigOutput(&PORTC, 5);
   portWritePin(&PORTC, 5, 0);
   while (1) {
-    animate("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    animate("abcdefghijklmnopqrstuvwxyz");
   }
 }
