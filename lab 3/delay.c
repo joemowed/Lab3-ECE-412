@@ -7,70 +7,74 @@
 #include "delay.h"
 #include <avr/interrupt.h>
 #include <stdbool.h>
-volatile bool waitFlagForDelay = false;
+static volatile bool waitFlagForDelay = false;
+static const uint16_t minMicroseconds = 24;
+static const uint16_t tuningMicroseconds = 25; // The time it takes for delayMicroseconds to operate,if the interrupt triggers instantly
 ISR(DELAY_ISR_HANDLE, ISR_BLOCK)
 {
 	waitFlagForDelay = true;
 	DELAY_CTRLB = 0x0;
 }
 // required by datasheet to write high byte first
-inline void writeTimerRegisterWord(volatile uint8_t *lowByte, uint16_t value)
+ inline void writeTimerCompare(uint16_t value)
 {
 	uint8_t sreg = SREG;
 	cli();
-	volatile uint8_t *const highByte = (lowByte + 1);
-	*highByte = (uint8_t)(value >> 8);
-	*lowByte = (uint8_t)(value & 0xFF);
+	const volatile uint8_t low = (uint8_t)(value & 0xFF);
+	const volatile uint8_t high = (uint8_t)(value >> 8);
+	DELAY_OCRAH = low;
+	DELAY_OCRAL = high;
 	SREG = sreg;
 }
-inline void resetCount(volatile uint8_t *CTRLB)
+inline void resetCount()
 {
-	volatile uint8_t *TCNTL = (CTRLB + 4);
-	writeTimerRegisterWord(TCNTL, 0x0);
+	DELAY_TCNTH = 0x0;
+	DELAY_TCNTL = 0x0;
 }
-inline void setupTimerForDelay(volatile uint8_t *CTRLB, volatile uint8_t *timerISRMSK, uint16_t compare)
+inline void setupTimerForDelay(uint16_t compare)
 {
-	volatile uint8_t *CTRLA = (CTRLB - 1);
-	*CTRLA = 0x0; // reset state
-	resetCount(CTRLB);
-	volatile uint8_t *OCRAL = (CTRLA + 8);
-	writeTimerRegisterWord(OCRAL, compare);
-	*timerISRMSK = (1 << OCIE1A); // enable only the a compare interrupt
+	DELAY_CTRLA = 0x0; // reset state
+	resetCount();
+	writeTimerCompare(compare);
+	DELAY_ISRMSK = (1 << OCIE1A); // enable only the a compare interrupt
 }
-inline uint16_t microsecondsToPeriodCount(uint16_t value)
+ inline uint16_t microsecondsToPeriodCount(uint16_t value)
 {
-	const uint16_t minMicroseconds = 8; // The time it takes for delayMicroseconds to operate,if the interrupt triggers instantly
-	// The below codes makes the timer sometimes run to the full counter duration (4090us)
-	// if(value < minMicroseconds){
-	// return 1U;
-	// }
+return 1;
 	if (value > 4090)
 	{ //~4090 is max for 16bit timer at 16mhz
 		return UINT16_MAX;
 	}
-	return ((value << 4) - ((minMicroseconds - 3) << 4)); // works because 16mhz has 1/16 microsecond period
+	return ((value << 4) - ((tuningMicroseconds - 3) << 4)); // works because 16mhz has 1/16 microsecond period
 }
-inline void startTimer(volatile uint8_t *CTRLB)
+inline void startTimer()
 {
-	*CTRLB = ((0x1 << WGM12) | (0x1)); // 0x1 sets clk src to cpu clk and starts timer.  CTC mode auto-resets the count on compareA match
+	DELAY_CTRLB = ((0x1 << WGM12) | (0x1)); // 0x1 sets clk src to cpu clk and starts timer.  CTC mode auto-resets the count on compareA match
 }
-inline void stopTimer(volatile uint8_t *CTRLB, volatile uint8_t *timerISRMSK)
+inline void stopTimer()
 {
-	*CTRLB = 0x0;
-	*timerISRMSK = 0;
+	DELAY_CTRLB = 0x0;
+	DELAY_ISRMSK =0x0;
 }
 // max 4090 microseconds, min 8 microseconds.  Operates with TIM1 in interrupt mode
-void delayMicroseconds(uint16_t microseconds)
-{
-	stopTimer(&DELAY_CTRLB, &DELAY_ISRMSK);
-	setupTimerForDelay(&DELAY_CTRLB, &DELAY_ISRMSK, microsecondsToPeriodCount(microseconds));
+inline void delayMicroseconds(const uint16_t microseconds)
+{	if(microseconds < 3){// function call alone takes 2.31 microseconds
+	return;}
+	
+	if(microseconds <minMicroseconds){
+	for(uint16_t i = 0;i<(minMicroseconds*4);i++){
+	asm("nop");
+	}
+	}
+	stopTimer();
+	setupTimerForDelay(microsecondsToPeriodCount(microseconds));
 	uint8_t sreg = SREG;
 	sei();
-	startTimer(&DELAY_CTRLB);
+	startTimer();
 	while (!waitFlagForDelay)
 	{
 	}
 	waitFlagForDelay = false;
 	SREG = sreg;
-	stopTimer(&DELAY_CTRLB, &DELAY_ISRMSK);
+	stopTimer();
 }

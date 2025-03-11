@@ -20,8 +20,10 @@ struct LCDConfig LCDConfig = {
 inline void LCDLatchData()
 {
 	portWritePin(&LCD_LATCH_PORT, LCD_LATCH_PIN, 1);
+	portWritePin(&PORTC, 5, 1);
 	// values lower than 9 do not currently work with the delayMicroseconds function.
-	delayMicroseconds(9);
+	delayMicroseconds(25);
+	portWritePin(&PORTC, 5, 0);
 	portWritePin(&LCD_LATCH_PORT, LCD_LATCH_PIN, 0);
 }
 void LCDRegSelect(bool isData)
@@ -39,6 +41,13 @@ void LCDCursorHome()
 {
 	LCDWriteCommand(0x2);
 	delayMicroseconds(LCD_LONG_DELAY);
+}
+inline void LCDZeroOutputs()
+{
+	portWritePin(&LCD_RW_PORT, LCD_RW_PIN, 0);
+	portWritePin(&LCD_LATCH_PORT, LCD_LATCH_PIN, 0);
+	portWritePin(&LCD_REG_SELECT_PORT, LCD_REG_SELECT_PIN, 0);
+	portWrite(&LCD_DATA_PORT, 0x0);
 }
 inline void LCDWriteData(uint8_t data)
 {
@@ -60,13 +69,6 @@ void LCDClear()
 {
 	LCDWriteCommand(0x1);
 	delayMicroseconds(LCD_LONG_DELAY);
-}
-inline void LCDZeroOutputs()
-{
-	portWritePin(&LCD_RW_PORT, LCD_RW_PIN, 0);
-	portWritePin(&LCD_LATCH_PORT, LCD_LATCH_PIN, 0);
-	portWritePin(&LCD_REG_SELECT_PORT, LCD_REG_SELECT_PIN, 0);
-	portWrite(&LCD_DATA_PORT, 0x0);
 }
 void LCDInit()
 {

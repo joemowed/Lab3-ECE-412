@@ -46,14 +46,17 @@ void animateShift()
 	}
 }
 // loads a CustomChar into the pixelBuffer
+void incrementDrawLength(){
+	drawLength++;
+}
 void loadCharInit(uint8_t curChar)
 {
+	incrementDrawLength();
 	const CustomChar *customChar = getFontChar(curChar);
 	for (uint8_t i = 0; i < 8; i++)
 	{
 		pixelBuffer[i][drawLength] = (customChar->lines[i]);
 	}
-	drawLength++;
 	animateShift(); // add a 1 pixel gap after each char in the pixelBuffer
 }
 // charStart: pointer to first byte of character in pixelBuffer
