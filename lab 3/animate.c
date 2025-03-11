@@ -121,7 +121,7 @@ if(i==ANIMATE_DELAY){
 }
 return false;
 }
-//takes ~6.1ms when drawing a frame, spends only 
+//takes ~6.1ms when drawing a frame, spends only 4.3us when only servicing the timer.
 void animate(const char *str) {  
 static bool isInitialized = false;
   if (!isInitialized) {
