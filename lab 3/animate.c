@@ -13,7 +13,6 @@
 #include "delay.h"
 #include "font.h"
 #include "regAPI.h"
-static bool isInitialized = false;
 static uint8_t pixelBuffer[8][ANIMATE_BUFFER_SIZE];  // 2d array, pixelBuffer[0:7] holds the
                                        // rows of pixels to be sent to drawFrame
 static uint8_t drawLength = 0;
@@ -78,7 +77,6 @@ void drawFrame() {
     CustomChar curChar = generateCustomChar(i);
     LCDWriteCustomChar(&curChar, i);
   }
-  //	LCDCursorHome();
   LCDClear();
   for (uint8_t i = 0; i < 3; i++) {
     LCDWriteData(' ');  // center the 8 chars that make up our frame
@@ -88,7 +86,6 @@ void drawFrame() {
   }
 }
 void animateInit(const char *str) {
-  isInitialized = true;
   for (uint8_t i = 0; i < ANIMATE_SPACE_COUNT; i++) {
     loadCharInit(' ');
   }
@@ -110,19 +107,32 @@ void animateInit(const char *str) {
   }
   drawLength += gapDrawLength;
 }
-void animateDelay() {
-  for (uint8_t i = 0; i < ANIMATE_DELAY; i++) {
-    delayMicroseconds(4000);
-  }
+bool animateDelay() {
+static uint8_t i =ANIMATE_DELAY;
+volatile static bool frameDelayFlag = false;
+delayFlag(&frameDelayFlag,4000);
+if(frameDelayFlag){
+	i++;
+  frameDelayFlag = false;
 }
-void animate(const char *str) {
+if(i==ANIMATE_DELAY){
+	i = 0;
+	return true;
+}
+return false;
+}
+//takes ~6.1ms when drawing a frame, spends only 
+void animate(const char *str) {  
+static bool isInitialized = false;
   if (!isInitialized) {
-    PINC = 0xFF;
     LCDInit();
     animateInit(str);
-    PINC = 0xFF;
+	isInitialized = true;
   }
-  drawFrame();     // takes 6.01ms
+  if(animateDelay()){
+  drawFrame();     // takes 5.57ms
   animateShift();  // takes 0.5ms when string length is 26
-  animateDelay();
+  }
+  else{
+  }
 }

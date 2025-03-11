@@ -55,4 +55,5 @@
 // max 4090 microseconds, min 8 microseconds.  Operates with TIM1 in interrupt
 // mode
 void delayMicroseconds(uint16_t microseconds);
+void delayFlag(volatile bool * flag,const uint16_t microseconds);
 #endif /* TIMERAPI_H_ */

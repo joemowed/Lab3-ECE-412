@@ -2,7 +2,7 @@
  * animate.h
  *
  * Created: 3/8/2025 8:56:16 AM
- *  Author: malon
+ *  Author: Joe Maloney
  */
 
 #ifndef ANIMATE_H_

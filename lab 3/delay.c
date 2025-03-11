@@ -8,13 +8,18 @@
 
 #include <avr/interrupt.h>
 #include <stdbool.h>
-static volatile bool waitFlagForDelay = false;
+volatile bool waitFlagForDelay = false;
+volatile bool* delayUserFlag = &waitFlagForDelay;
+volatile bool userFlagInUse = false;
 const uint16_t tuningMicroseconds =
     9;  // The time it takes for delayMicroseconds to operate,if the interrupt
         // triggers instantly
 ISR(DELAY_ISR_HANDLE, ISR_BLOCK) {
-  waitFlagForDelay = true;
   DELAY_CTRLB = 0x0;
+  waitFlagForDelay = true;
+  *delayUserFlag = true;
+  delayUserFlag = &waitFlagForDelay;
+  userFlagInUse = false;
 }
 // required by datasheet to write high byte first
 inline void writeTimerCompare(uint16_t value) {
@@ -95,8 +100,19 @@ void delayWrapper(const uint16_t microseconds) {
   while (!waitFlagForDelay) {
   }
   waitFlagForDelay = false;
-  SREG = sreg;
   stopTimer();
+  SREG = sreg;
+}
+void delayFlag(volatile bool *flag,const uint16_t microseconds){
+	if(userFlagInUse){
+		return;
+	}
+	userFlagInUse = true;
+	delayUserFlag = flag;
+	if(microseconds < tuningMicroseconds){
+		*flag = true;
+	}
+	timerInit(microseconds);
 }
 void delayMicroseconds(const uint16_t microseconds) {
   if (microseconds <= 2) {  // function call alone takes 938 microseconds
