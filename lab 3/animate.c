@@ -46,7 +46,7 @@ bool LSLCarry(uint8_t *value, bool carryIn) {
 // helper function for animateShift().  Shifts a single row of pixelBuffer.
 void animateShiftRow(uint8_t *rowStart) {
     // MSB of the start of row
-    bool MSBCarry = READ_BIT(rowStart[0], 4);
+    bool MSBCarry = READ_BIT(rowStart[0], 7);
     // start at the last char of the array
     int8_t i = drawLength - 1;
     // shift the last char in the array, with the MSB of the first byte in the
@@ -116,12 +116,14 @@ CustomChar generateCustomChar(uint8_t charIndex) {
 
 // send the first 8 chars in pixelbuffer to LCD, and draw them on the LCD
 void drawFrame() {
+static bool isRendered = false;
     // render the pixelBuffer into custom chararcters, and send the custom
     // characters to the LCD to be drawn later
     for (uint8_t i = 0; i < 8; i++) {
         CustomChar curChar = generateCustomChar(i);
         LCDWriteCustomChar(&curChar, i);
     }
+	if(!isRendered){
     // clear the LCD and set the cursor home
     LCDClear();
     // push the cursor to the center of LCD by drawing spaces
@@ -133,6 +135,8 @@ void drawFrame() {
     for (uint8_t i = 0; i < 8; i++) {
         LCDWriteData(i);
     }
+	isRendered = true;
+	}
 }
 
 // loads the given string into the pixelBuffer

@@ -9,6 +9,18 @@
 #include "delay.h"
 #include "portAPI.h"
 
+// configuration settings used by LCDInit()
+struct LCDConfig LCDConfig = {
+    .isCursorIncrement = 1,
+    .isDisplayShift = 0,
+    .isDisplayOn = 1,
+    .isCursorOn = 0,
+    .isCursorBlinkOn = 0,
+    .is8BitData = 1,
+    .is2LineMode = 0,
+    .is5x11Font = 0,
+};
+ 
 // sends pulse on E to latch the data sent to LCD
 inline void LCDLatchData() {
     portWritePin(&LCD_LATCH_PORT, LCD_LATCH_PIN, 1);
@@ -87,6 +99,8 @@ void LCDWriteCustomChar(CustomChar *customChar, uint8_t addr) {
     addr = (1 << 6) | (addr << 3);
     // set the address of the incoming custom character on the LCD
     LCDWriteCommand(addr);
+	//without this additional delay, sometimes not all bytes of the customChar are read by LCD
+	delayMicroseconds(LCD_SHORT_DELAY);
     for (uint8_t i = 0; i < 8; i++) { // send each of the 8 bytes that make up a
                                       // custom character to the LCD
         // only bits 0:5 of each byte are used by the LCD

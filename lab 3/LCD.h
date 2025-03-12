@@ -20,10 +20,11 @@
 #define LCD_LATCH_PIN 2           // the pin used for the LCD pin E
 #define LCD_LATCH_PORT PORTB      // the port associated with the E pin
 
-#define LCD_LONG_DELAY                                                         \
-    1600 // microseconds, used for return home and clear display
+// microseconds, used for return home and clear display
+#define LCD_LONG_DELAY 1600 
 
-#define LCD_SHORT_DELAY 40 // microseconds, used for all other LCD instructions
+// microseconds, used for all other LCD instructions
+#define LCD_SHORT_DELAY 40
 
 // writes the given uint8_t to the LCD as data
 void LCDWriteData(uint8_t data);
@@ -54,6 +55,7 @@ void LCDCursorHome();
 // configuration for the LCD
 // This is used by the LCDInit() function to
 // configure the display
+// the actual configuration is in LCD.c
 struct LCDConfig {
     bool isCursorIncrement;
 
@@ -64,16 +66,6 @@ struct LCDConfig {
     bool is8BitData;
     bool is2LineMode;
     bool is5x11Font;
-};
-struct LCDConfig LCDConfig = {
-    .isCursorIncrement = 1,
-    .isDisplayShift = 0,
-    .isDisplayOn = 1,
-    .isCursorOn = 0,
-    .isCursorBlinkOn = 0,
-    .is8BitData = 1,
-    .is2LineMode = 0,
-    .is5x11Font = 0,
 };
 
 #endif /* LCD_H_ */
