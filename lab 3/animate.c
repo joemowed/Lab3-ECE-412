@@ -193,7 +193,7 @@ bool animateDelay() {
     }
     return false;
 }
-// call takes ~6.1ms when drawing a frame, takes only 4.3us when only servicing
+// call takes ~4.25ms when drawing a frame, takes only 4.3us when only servicing
 // the timer
 
 void animate(const char *str) {
@@ -201,7 +201,7 @@ void animate(const char *str) {
     if (!isInitialized) {
         LCDInit();            // initialize the LCD
         animateInit(str);     // load the given string into the animation buffer
-        isInitialized = true; // do not initalize animate again
+        isInitialized = true; // do not initialize animate again
     }
     // draw the frame and shift the bits in the buffer only if ANIMATE_DELAY
     // amount of time has passed
