@@ -165,8 +165,8 @@ int main(void) {
   portConfigOutput(&PORTC, 5);
   portWritePin(&PORTC, 5, 0);
   while (1) {
-  portWritePin(&PORTC, 5, 1);
-    animate("abcdefghijklmnopqrstuvwxyz");
   portWritePin(&PORTC, 5, 0);
+    animate("abcdefghijklmnopqrstuvwxyz");
+  portWritePin(&PORTC, 5, 1);
   }
 }
