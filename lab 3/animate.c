@@ -138,7 +138,6 @@ void drawFrame() {
   for (uint8_t i = 0; i < 8; i++) {
     LCDWriteData(i);
   }
-  isRendered = true;
 }
 
 // loads the given string into the pixelBuffer
