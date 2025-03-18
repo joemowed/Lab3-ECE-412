@@ -166,7 +166,7 @@ int main(void) {
   portWritePin(&PORTC, 5, 0);
   while (1) {
   portWritePin(&PORTC, 5, 0);
-    animate("abcdefghijklmnopqrstuvwxyz");
+    animate("Arvato");
   portWritePin(&PORTC, 5, 1);
   }
 }
