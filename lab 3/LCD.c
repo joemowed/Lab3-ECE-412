@@ -69,13 +69,13 @@ inline void LCDClear() {
 void LCDInit() {
   // configurePins
   for (int i = 0; i <= 7; i++) {
-    portConfigOutput(&LCD_DATA_PORT, i);  // set the LCD data port as output
+    configOutputPin(&LCD_DATA_PORT, i);  // set the LCD data port as output
   }
   // set the other LCD pins as outputs
-  portConfigOutput(&LCD_LATCH_PORT, LCD_LATCH_PIN);
-  portConfigOutput(&LCD_REG_SELECT_PORT, LCD_REG_SELECT_PIN);
+  configOutputPin(&LCD_LATCH_PORT, LCD_LATCH_PIN);
+  configOutputPin(&LCD_REG_SELECT_PORT, LCD_REG_SELECT_PIN);
   // RW needs to be low for duration of LCD usage
-  portConfigOutput(&LCD_RW_PORT, LCD_RW_PIN);
+  configOutputPin(&LCD_RW_PORT, LCD_RW_PIN);
   LCDZeroOutputs();  // clear outputs on LCD pins
   // "function set" from datasheet
   uint8_t tmp = ((1 << 5) | (LCDConfig.is8BitData << 4) |

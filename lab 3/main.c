@@ -162,7 +162,7 @@ void Command(void)  // command interpreter
 #include "profiling.h"
 #include <avr/io.h>
 int main(void) {
-  portConfigOutput(&PORTC, 5);
+  configOutputPin(&PORTC, 5);
   portWritePin(&PORTC, 5, 0);
   while (1) {
   portWritePin(&PORTC, 5, 0);
