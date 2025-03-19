@@ -39,7 +39,7 @@ void LCDClear();
 void LCDInit();
 
 // typedef for a custom character.
-// on the 1602 LCD, custom chararcters are 5x8 pixels
+// on the 1602 LCD, custom characters are 5x8 pixels
 // we use bits 0:5 to define each row in a custom character
 typedef struct CustomCharStruct {
     uint8_t lines[8];
@@ -51,6 +51,9 @@ void LCDWriteCustomChar(CustomChar *custChar, uint8_t addr);
 
 // sends the cursor to 0,0 on the LCD
 void LCDCursorHome();
+
+//sets the appropriate pins to outputs for driving the LCD
+void LCDConfigPins();
 
 // configuration for the LCD
 // This is used by the LCDInit() function to

@@ -8,6 +8,8 @@
 #ifndef ANIMATE_H_
 #define ANIMATE_H_
 
+#include "pinstacking.h"
+
 // buffer size in chars, 8 (or less) chars are used for spaces on the marquee
 // (e.g. 20-8= 16 char string max)
 #define ANIMATE_BUFFER_SIZE 120
@@ -25,6 +27,6 @@
  * calculated by "ANIMATE_DELAY" within this header has passed.  Only the first
  * call to animate loads the string, subsequent calls take the string as a
  * parameter but do not update the string within animate.*/
-void animate(const char *str);
+void animate(const char *str,const PSCallbacks * pinStacking);
 
 #endif /* ANIMATE_H_ */

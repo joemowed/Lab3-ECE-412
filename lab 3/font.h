@@ -11,6 +11,6 @@
 #include "LCD.h"
 
 // returns a LCD compatible CustomChar, given a ascii character code
-CustomChar getFontChar(char curChar);
+CustomChar getFontChar(uint8_t curChar);
 
 #endif /* FONT_H_ */

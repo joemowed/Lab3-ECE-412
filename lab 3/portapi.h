@@ -22,15 +22,31 @@ typedef struct PortStruct {
 } PortStruct;
 typedef PortStruct *const Port;
 
-/* gets a valid base address for a PortStruct from the microchip providied
- * defintions of the port registers, (e.g PORTC,PORTA,etc.).  This allows for
- * the nice systax of "portAPIFunction(&PORTC,...)" */
+/* gets a valid base address for a PortStruct from the microchip provided
+ * definitions of the port registers, (e.g PORTC,PORTA,etc.).  This allows for
+ * the nice syntax of "portAPIFunction(&PORTC,...)" */
 inline Port getAddrFromPort(volatile uint8_t *portRegister) {
   return (Port)(portRegister - 2);
 }
 
+
+// configures a whole port as output
+inline void configOutputPort(volatile uint8_t *portaddress) {
+  Port port = getAddrFromPort(portaddress);
+  port->PORTx = 0U;
+  port->DDRx = 0xFF;
+  return;
+}
+// configures a whole port as input
+inline void configInputPort(volatile uint8_t *portaddress) {
+  Port port = getAddrFromPort(portaddress);
+  port->PORTx = 0U;
+  port->DDRx = 0U;
+  return;
+}
+
 // configures a pin as input
-inline void portConfigInput(volatile uint8_t *portaddress, uint8_t pin) {
+inline void configInputPin(volatile uint8_t *portaddress, uint8_t pin) {
   Port port = getAddrFromPort(portaddress);
   CLEAR_BIT(port->PORTx, pin);  // set output low, if set
   CLEAR_BIT(port->DDRx, pin);   // set pin as input
@@ -38,7 +54,7 @@ inline void portConfigInput(volatile uint8_t *portaddress, uint8_t pin) {
 }
 
 // configures a pin as output, and sets output low
-inline void portConfigOutput(volatile uint8_t *portaddress, uint8_t pin) {
+inline void configOutputPin(volatile uint8_t *portaddress, uint8_t pin) {
   Port port = getAddrFromPort(portaddress);
   CLEAR_BIT(port->PORTx, pin);  // set output low, if set
   SET_BIT(port->DDRx, pin);     // set pin as output

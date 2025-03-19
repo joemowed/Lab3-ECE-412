@@ -142,7 +142,7 @@ CustomChar decompressChar(const uint8_t *compressedStart) {
     return ret;
 }
 
-CustomChar getFontChar(char curChar) {
+CustomChar getFontChar(uint8_t curChar) {
     // calculate the index of the font from a given ascii code
     uint16_t index = curChar - 65;
     index *= 5;

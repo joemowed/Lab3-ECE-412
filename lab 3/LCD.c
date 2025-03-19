@@ -14,8 +14,8 @@ struct LCDConfig LCDConfig = {
     .isCursorIncrement = 1,
     .isDisplayShift = 0,
     .isDisplayOn = 1,
-    .isCursorOn = 0,
-    .isCursorBlinkOn = 0,
+    .isCursorOn = 1,
+    .isCursorBlinkOn = 1,
     .is8BitData = 1,
     .is2LineMode = 0,
     .is5x11Font = 0,
@@ -66,16 +66,16 @@ inline void LCDClear() {
   delayMicroseconds(LCD_LONG_DELAY);  // wait for LCD to process
 }
 
-void LCDInit() {
-  // configurePins
-  for (int i = 0; i <= 7; i++) {
-    configOutputPin(&LCD_DATA_PORT, i);  // set the LCD data port as output
-  }
+void LCDConfigPins(){
+    configOutputPort(&LCD_DATA_PORT);  // set the LCD data port as output
   // set the other LCD pins as outputs
   configOutputPin(&LCD_LATCH_PORT, LCD_LATCH_PIN);
   configOutputPin(&LCD_REG_SELECT_PORT, LCD_REG_SELECT_PIN);
   // RW needs to be low for duration of LCD usage
   configOutputPin(&LCD_RW_PORT, LCD_RW_PIN);
+}
+void LCDInit() {
+	LCDConfigPins();
   LCDZeroOutputs();  // clear outputs on LCD pins
   // "function set" from datasheet
   uint8_t tmp = ((1 << 5) | (LCDConfig.is8BitData << 4) |

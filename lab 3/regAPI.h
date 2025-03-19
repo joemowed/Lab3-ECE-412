@@ -21,4 +21,8 @@
 // clears the bit at given position in the provided register
 #define CLEAR_BIT(reg, bitPos) ((reg) &= (~(1 << (bitPos))))
 
+//saves all general purpose registers
+void saveRegs();
+//restores all general purpose registers
+void restoreRegs();
 #endif /* REGAPI_H_ */
