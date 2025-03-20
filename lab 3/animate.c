@@ -194,14 +194,16 @@ bool animateDelay() {
   }
   return false;
 }
+
+
 // call takes ~4.25ms when drawing a frame, takes only 4.3us when only servicing
 // the timer
 
-void animate(const char *str,const PSCallbacks *pinStacking) {
+bool animate(const char *str,const PSCallbacks *pinStacking,PSCallbacks * LCDStacking) {
   static bool isInitialized = false;
   if (!isInitialized) {
   pinStacking->disable();//disable any overlapping functions of the pins used by animate
-    LCDInit();             // initialize the LCD
+    LCDInit(LCDStacking);             // initialize the LCD
     animateInit(str);      // load the given string into the animation buffer
     isInitialized = true;  // do not initialize animate again
   pinStacking->enable();//enable any overlapping functions of the pins used by animate
@@ -216,5 +218,12 @@ void animate(const char *str,const PSCallbacks *pinStacking) {
   pinStacking->enable();//enable any overlapping functions of the pins used by animate
   } else {
     // do nothing if ANIMATE_DELAY has not passed
+  }
+  if(receiveFlag){
+  receiveFlag = false;
+	  return true;
+  }
+  else{
+	  return false;
   }
 }

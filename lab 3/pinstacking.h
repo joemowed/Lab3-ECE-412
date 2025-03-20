@@ -9,11 +9,10 @@
 #ifndef PINSTACKING_H_
 #define PINSTACKING_H_
 
-
+#include <stdbool.h>
 typedef struct PinStackingCallbackStruct{
 	void(*enable)(void);
 	void(*disable)(void);
 } PSCallbacks;
-
-
+bool receiveFlag;
 #endif /* PINSTACKING_H_ */

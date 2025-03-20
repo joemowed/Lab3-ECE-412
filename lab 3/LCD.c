@@ -8,19 +8,20 @@
 
 #include "delay.h"
 #include "portAPI.h"
-
+#include "pinstacking.h"
 // configuration settings used by LCDInit()
 struct LCDConfig LCDConfig = {
     .isCursorIncrement = 1,
     .isDisplayShift = 0,
     .isDisplayOn = 1,
-    .isCursorOn = 1,
-    .isCursorBlinkOn = 1,
+    .isCursorOn = 0,
+    .isCursorBlinkOn = 0,
     .is8BitData = 1,
     .is2LineMode = 0,
     .is5x11Font = 0,
 };
-
+PSCallbacks storageC
+PSCallbacks * currentLCDStacking;
 // sends pulse on E to latch the data sent to LCD
 inline void LCDLatchData() {
   portWritePin(&LCD_LATCH_PORT, LCD_LATCH_PIN, 1);
@@ -44,20 +45,27 @@ inline void LCDZeroOutputs() {
 
 inline void LCDWriteData(uint8_t data) {
   // select data mode on the LCD
+  currentLCDStacking->disable();
+  LCDConfigPins();
   portWritePin(&LCD_REG_SELECT_PORT, LCD_REG_SELECT_PIN, 1);
   portWrite(&LCD_DATA_PORT, data);     // put the data on the data lines
   LCDLatchData();                      // send a pulse on E to latch the data
   delayMicroseconds(LCD_SHORT_DELAY);  // wait for LCD to process
   LCDZeroOutputs();                    // return all LCD pins to zero
+
+  currentLCDStacking->enable();
 }
 
 inline void LCDWriteCommand(uint8_t data) {
   // select command mode on the LCD
+  currentLCDStacking->disable();
+  LCDConfigPins();
   portWritePin(&LCD_REG_SELECT_PORT, LCD_REG_SELECT_PIN, 0);
   portWrite(&LCD_DATA_PORT, data);     // put the data on the data lines
   LCDLatchData();                      // send a pulse on E to latch the data
   delayMicroseconds(LCD_SHORT_DELAY);  // wait for LCD to process
   LCDZeroOutputs();                    // return all LCD pins to zero
+  currentLCDStacking->enable();
 }
 
 // clears display, and sets cursor at 0,0
@@ -74,7 +82,9 @@ void LCDConfigPins(){
   // RW needs to be low for duration of LCD usage
   configOutputPin(&LCD_RW_PORT, LCD_RW_PIN);
 }
-void LCDInit() {
+void LCDInit(PSCallbacks * LCDStacking) {
+*currentLCDStacking = *LCDStacking;
+  currentLCDStacking->disable();
 	LCDConfigPins();
   LCDZeroOutputs();  // clear outputs on LCD pins
   // "function set" from datasheet
@@ -92,6 +102,7 @@ void LCDInit() {
          LCDConfig.isCursorBlinkOn);
   LCDWriteCommand(tmp);
   LCDClear();  // clear the display, and sets the cursor to 0,0
+  currentLCDStacking->enable();
 }
 
 void LCDWriteCustomChar(CustomChar *customChar, uint8_t addr) {

@@ -12,5 +12,6 @@
 
 #define TTESC "\x1B"
 #define TTCSI TTESC"["
-#define TTCR "\x0d"
+#define TTCR "\x0d" //terminal carriage return, sets cursor to leftmost margin
+#define TTLF "\x0a" //terminal line feed, inserts newline
 #endif /* TERMCONTROL_H_ */

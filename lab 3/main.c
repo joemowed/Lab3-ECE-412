@@ -34,12 +34,14 @@ char LADC;            // shared ADC variable with Assembly
 
 char volts[5];  // string buffer for ADC output
 int Acc;        // Accumulator for ADC use
-
+#include "regAPI.h"
 void UART_Puts(const char *str)  // Display a string in the PC Terminal Program
 {
 	while (*str) {
 		ASCII = *str++;
+		saveRegs();
 		UART_Put();
+		restoreRegs();
 	}
 }
 
@@ -174,47 +176,49 @@ void UART_Init( unsigned int ubrr)
 	/* Set frame format: 8data, 2stop bit */
 	UCSR0C = (1<<USBS0)|(3<<UCSZ00);
 }
+
 void delayLoop(uint16_t cnt){
-		portWritePin(&PORTC, 5, 1);
+//cnt = 6000 is ~2.6ms with -O0
+//cnt = 3000 is ~1.3ms with -O0
 	for(uint16_t i =0;i<cnt;i++){
 		asm("nop");
 	}
-		portWritePin(&PORTC, 5, 0);
 }
 void enableUARTCallback(){
-UART_Init(103U);
-delayLoop(6000);
-UART_Puts(TTESC"8");
-UART_Puts(TTCSI"0J");
+	UART_Init(103U);
+	delayLoop(20000);
+	UART_Puts(TTCSI"u");
+	UART_Puts(TTCSI"0J");
+	delayLoop(10000);
 }
 void disableUARTCallback(){
-static bool isInit = false;
-UCSR0B = (0<<RXEN0)|(0<<TXEN0);
-delayLoop(6000);
-if(!isInit){
-UART_Puts(TTESC"6");	
-	isInit = true;
+	delayLoop(20000);
+	UART_Puts(TTCSI"s");
+	UCSR0B = (0<<RXEN0)|(0<<TXEN0);
+	delayLoop(10000);
 }
-UART_Puts(TTESC"7");
+
+const PSCallbacks animateStacking= {
+	enableUARTCallback,
+disableUARTCallback};
+//pcint16
+void enableReciveFlag(){
+PCMSK2 = (1<<PCINT16);
+PCICR = (1<<PCIE2);
 }
-void nullcallback(){
-	return;
+void disableReceiveFlag(){
+PCICR = 0x0;
 }
-	const PSCallbacks animateStacking= {
-		enableUARTCallback,
-	disableUARTCallback};
+static PSCallbacks LCDStacking = {enableReciveFlag,disableReceiveFlag};
 int main(void) {
-configInputPort(&PORTC);
-configOutputPort(&PORTC);
-configInputPort(&PORTC);
-configOutputPort(&PORTC);
-UCSR0B = (0<<RXEN0)|(0<<TXEN0);
-UART_Init(103U);
-delayMicroseconds(1500);
-Banner();
+	UCSR0B = (0<<RXEN0)|(0<<TXEN0);
+	UART_Init(103U);
+	Banner();
 	configOutputPin(&PORTC, 5);
 	portWritePin(&PORTC, 5, 0);
 	while (1) {
-		animate("Arvato",&animateStacking);
+		if(animate("Arvato",&animateStacking,&LCDStacking)){
+			asm("nop");
+		}
 	}
 }
