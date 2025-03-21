@@ -14,13 +14,12 @@ struct LCDConfig LCDConfig = {
     .isCursorIncrement = 1,
     .isDisplayShift = 0,
     .isDisplayOn = 1,
-    .isCursorOn = 0,
-    .isCursorBlinkOn = 0,
+    .isCursorOn = 1,
+    .isCursorBlinkOn = 1,
     .is8BitData = 1,
     .is2LineMode = 0,
     .is5x11Font = 0,
 };
-PSCallbacks storageC
 PSCallbacks * currentLCDStacking;
 // sends pulse on E to latch the data sent to LCD
 inline void LCDLatchData() {
@@ -83,7 +82,7 @@ void LCDConfigPins(){
   configOutputPin(&LCD_RW_PORT, LCD_RW_PIN);
 }
 void LCDInit(PSCallbacks * LCDStacking) {
-*currentLCDStacking = *LCDStacking;
+currentLCDStacking = LCDStacking;
   currentLCDStacking->disable();
 	LCDConfigPins();
   LCDZeroOutputs();  // clear outputs on LCD pins

@@ -9,7 +9,7 @@
  #include "termcontrol.h"
 #include <avr/interrupt.h>
 bool receiveFlag = false;
-ISR(PCINT0_vect, ISR_BLOCK) {
+ISR(PCINT2_vect, ISR_BLOCK) {
 receiveFlag = true;
 }
 

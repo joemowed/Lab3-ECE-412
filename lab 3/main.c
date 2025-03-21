@@ -161,7 +161,7 @@ void Command(void)  // command interpreter
 
 #include "animate.h"
 #include "delay.h"
-#include "portapi.h"
+#include "portAPI.h"
 #include "profiling.h"
 #include "pinstacking.h"
 #include "termcontrol.h"
@@ -202,20 +202,22 @@ const PSCallbacks animateStacking= {
 	enableUARTCallback,
 disableUARTCallback};
 //pcint16
-void enableReciveFlag(){
+void enableReceiveFlag(){
 PCMSK2 = (1<<PCINT16);
 PCICR = (1<<PCIE2);
 }
 void disableReceiveFlag(){
 PCICR = 0x0;
 }
-static PSCallbacks LCDStacking = {enableReciveFlag,disableReceiveFlag};
+void nullfunc(){
+	return;
+}
+//static PSCallbacks nullPS = {nullfunc,nullfunc};
+PSCallbacks LCDStacking = {enableReceiveFlag,disableReceiveFlag};
 int main(void) {
 	UCSR0B = (0<<RXEN0)|(0<<TXEN0);
 	UART_Init(103U);
 	Banner();
-	configOutputPin(&PORTC, 5);
-	portWritePin(&PORTC, 5, 0);
 	while (1) {
 		if(animate("Arvato",&animateStacking,&LCDStacking)){
 			asm("nop");

@@ -212,7 +212,6 @@ bool animate(const char *str,const PSCallbacks *pinStacking,PSCallbacks * LCDSta
   // amount of time has passed
   if (animateDelay()) {
   pinStacking->disable();//disable any overlapping functions of the pins used by animate
-  LCDConfigPins();// enable the required LCD pins as outputs
     drawFrame();     // takes 5.57ms, draws the frame on LCD
     animateShift();  // takes 0.5ms when string length is 26
   pinStacking->enable();//enable any overlapping functions of the pins used by animate
