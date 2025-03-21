@@ -23,7 +23,7 @@ typedef struct PinStackingCallbackStruct {
 /* Global flag indicating that the UART RX pin used by the mEDBG was low when it
  * was polled.  This value is set to true when the RX pin is polled as low.  It
  * must be reset to false by the application when it is handled. */
-bool RXFlag;
+extern bool RXFlag;
 
 // polls the mEDBG RX pin and sets the RXFlag if the pin is low
 void pollForUARTReceive();
