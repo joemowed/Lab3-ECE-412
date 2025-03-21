@@ -195,16 +195,13 @@
     <Compile Include="profiling.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="regAPI.c">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="regAPI.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="delay.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="regrestore.s">
+    <Compile Include="regAPI.s">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="termcontrol.h">
