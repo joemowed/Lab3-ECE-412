@@ -5,8 +5,8 @@
  * Created: 3/19/2025 12:39:52 AM
  *  Author: malon
  */ 
-.section ".data"					;student comment here
-REGSAVE_R0: .byte 1
+.section ".data"					;Make room in RAM for storing the 32 8-bit
+REGSAVE_R0: .byte 1;values of the registers to be saved/restored
 REGSAVE_R1: .byte 1
 REGSAVE_R2: .byte 1
 REGSAVE_R3: .byte 1
@@ -39,9 +39,9 @@ REGSAVE_R29: .byte 1
 REGSAVE_R30: .byte 1
 REGSAVE_R31: .byte 1
 
-.section ".text"					;student comment here
-.global saveRegs
-saveRegs: sts REGSAVE_R0, r0
+.section ".text"					
+.global saveRegs ; saves all cpu registers to RAM
+saveRegs: sts REGSAVE_R0, r0; to be restored later
  sts REGSAVE_R1, r1
  sts REGSAVE_R2, r2
  sts REGSAVE_R3, r3
@@ -75,8 +75,8 @@ saveRegs: sts REGSAVE_R0, r0
  sts REGSAVE_R31, r31
  sts REGSAVE_R31, r31
  ret
- .global restoreRegs
- restoreRegs: lds r0, REGSAVE_R0
+ .global restoreRegs;restores all cpu registers that were
+ restoreRegs: lds r0, REGSAVE_R0; saved to RAM with 'saveRegs()'
   lds r1, REGSAVE_R1
   lds r2, REGSAVE_R2
   lds r3, REGSAVE_R3

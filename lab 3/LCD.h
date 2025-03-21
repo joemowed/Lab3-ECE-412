@@ -7,10 +7,12 @@
 
 #ifndef LCD_H_
 #define LCD_H_
+
+#include "pinstacking.h"
 #include <avr/io.h>     //used in this file to define the ports below
 #include <stdbool.h>    //
 #include <stdint-gcc.h> //import the nessasary types for declarations
-#include "pinstacking.h"
+
 #define LCD_DATA_PORT PORTD       // the port used for LCD data pins 0:7
 #define LCD_REG_SELECT_PIN 1      // the pin used for RS on the LCD
 #define LCD_REG_SELECT_PORT PORTB // the port associated with the RS pin
@@ -20,7 +22,7 @@
 #define LCD_LATCH_PORT PORTB      // the port associated with the E pin
 
 // microseconds, used for return home and clear display
-#define LCD_LONG_DELAY 1600 
+#define LCD_LONG_DELAY 1600
 
 // microseconds, used for all other LCD instructions
 #define LCD_SHORT_DELAY 40
@@ -51,7 +53,7 @@ void LCDWriteCustomChar(CustomChar *custChar, uint8_t addr);
 // sends the cursor to 0,0 on the LCD
 void LCDCursorHome();
 
-//sets the appropriate pins to outputs for driving the LCD
+// sets the appropriate pins to outputs for driving the LCD
 void LCDConfigPins();
 
 // configuration for the LCD

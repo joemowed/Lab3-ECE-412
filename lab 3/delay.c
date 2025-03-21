@@ -93,6 +93,7 @@ inline void stopTimer() {
     DELAY_ISRMSK = 0x0;
 }
 
+// initializes the timer
 uint8_t timerInit(const uint16_t microseconds) {
     // takes 1.12us, stops the timer if it isn't already
     stopTimer();
@@ -128,7 +129,8 @@ void delayWrapper(const uint16_t microseconds) {
     stopTimer(); // stop the timer
     SREG = sreg; // restore the SREG
 }
-
+/* Sets the given flag to to true when the given number of microseconds has
+ * passed.  This function needs to be polled.*/
 void delayFlag(volatile bool *flag, const uint16_t microseconds) {
     if (userFlagInUse) {
         // do nothing if already waiting for an interrupt to set the user flag
