@@ -48,7 +48,7 @@ inline void configInputPort(volatile uint8_t *portaddress) {
 // configures a pin as input
 inline void configInputPin(volatile uint8_t *portaddress, uint8_t pin) {
   Port port = getAddrFromPort(portaddress);
-  CLEAR_BIT(port->PORTx, pin);  // set output low, if set
+  SET_BIT(port->PORTx, pin);  // set output high, enables PUR
   CLEAR_BIT(port->DDRx, pin);   // set pin as input
   return;
 }
@@ -82,13 +82,13 @@ inline void portWritePin(volatile uint8_t *portaddress, uint8_t pin,
 // read an entire port into a byte
 inline volatile uint8_t portRead(volatile uint8_t *portaddress) {
   Port port = getAddrFromPort(portaddress);
-  return port->PORTx;  // read the port
+  return port->PINx;  // read the port
 }
 
 // read a single pin
 inline volatile bool portReadPin(volatile uint8_t *portaddress, uint8_t pin) {
   Port port = getAddrFromPort(portaddress);
-  return READ_BIT(port->PORTx, pin);  // read the pin
+  return READ_BIT(port->PINx, pin);  // read the pin
 }
 
 // write an entire port's outputs to a given value

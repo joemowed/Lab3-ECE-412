@@ -2,7 +2,7 @@
 * pinstacking.h
 *
 * Created: 3/18/2025 9:35:07 PM
-*  Author: malon
+*  Author: Joe Maloney
 */
 
 
@@ -14,5 +14,8 @@ typedef struct PinStackingCallbackStruct{
 	void(*enable)(void);
 	void(*disable)(void);
 } PSCallbacks;
-bool receiveFlag;
+bool RXFlag;
+void pollForUARTReceive();
+const PSCallbacks animateStacking;
+PSCallbacks LCDStacking;
 #endif /* PINSTACKING_H_ */

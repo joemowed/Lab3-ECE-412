@@ -27,6 +27,6 @@
  * calculated by "ANIMATE_DELAY" within this header has passed.  Only the first
  * call to animate loads the string, subsequent calls take the string as a
  * parameter but do not update the string within animate.*/
-bool animate(const char *str,const PSCallbacks * pinStacking,PSCallbacks *LCDStacking);
+void animate(const char *str,const PSCallbacks * pinStacking,PSCallbacks *LCDStacking);
 
 #endif /* ANIMATE_H_ */

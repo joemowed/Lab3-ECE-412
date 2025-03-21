@@ -14,8 +14,8 @@ struct LCDConfig LCDConfig = {
     .isCursorIncrement = 1,
     .isDisplayShift = 0,
     .isDisplayOn = 1,
-    .isCursorOn = 1,
-    .isCursorBlinkOn = 1,
+    .isCursorOn = 0,
+    .isCursorBlinkOn = 0,
     .is8BitData = 1,
     .is2LineMode = 0,
     .is5x11Font = 0,
@@ -73,7 +73,7 @@ inline void LCDClear() {
   delayMicroseconds(LCD_LONG_DELAY);  // wait for LCD to process
 }
 
-void LCDConfigPins(){
+inline void LCDConfigPins(){
     configOutputPort(&LCD_DATA_PORT);  // set the LCD data port as output
   // set the other LCD pins as outputs
   configOutputPin(&LCD_LATCH_PORT, LCD_LATCH_PIN);

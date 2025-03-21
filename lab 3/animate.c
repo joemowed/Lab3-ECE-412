@@ -13,7 +13,8 @@
 #include "delay.h"
 #include "font.h"
 #include "regAPI.h"
-
+#include "portAPI.h"
+#include <avr/io.h>
 // 2d array, pixelBuffer[0:7] holds the
 // rows of pixels to be sent to drawFrame
 static uint8_t pixelBuffer[8][ANIMATE_BUFFER_SIZE];
@@ -199,7 +200,7 @@ bool animateDelay() {
 // call takes ~4.25ms when drawing a frame, takes only 4.3us when only servicing
 // the timer
 
-bool animate(const char *str,const PSCallbacks *pinStacking,PSCallbacks * LCDStacking) {
+void animate(const char *str,const PSCallbacks *pinStacking,PSCallbacks * LCDStacking) {
   static bool isInitialized = false;
   if (!isInitialized) {
   pinStacking->disable();//disable any overlapping functions of the pins used by animate
@@ -216,13 +217,7 @@ bool animate(const char *str,const PSCallbacks *pinStacking,PSCallbacks * LCDSta
     animateShift();  // takes 0.5ms when string length is 26
   pinStacking->enable();//enable any overlapping functions of the pins used by animate
   } else {
-    // do nothing if ANIMATE_DELAY has not passed
+    pollForUARTReceive();
   }
-  if(receiveFlag){
-  receiveFlag = false;
-	  return true;
-  }
-  else{
-	  return false;
-  }
+
 }

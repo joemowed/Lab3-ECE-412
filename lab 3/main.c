@@ -177,50 +177,12 @@ void UART_Init( unsigned int ubrr)
 	UCSR0C = (1<<USBS0)|(3<<UCSZ00);
 }
 
-void delayLoop(uint16_t cnt){
-//cnt = 6000 is ~2.6ms with -O0
-//cnt = 3000 is ~1.3ms with -O0
-	for(uint16_t i =0;i<cnt;i++){
-		asm("nop");
-	}
-}
-void enableUARTCallback(){
-	UART_Init(103U);
-	delayLoop(20000);
-	UART_Puts(TTCSI"u");
-	UART_Puts(TTCSI"0J");
-	delayLoop(10000);
-}
-void disableUARTCallback(){
-	delayLoop(20000);
-	UART_Puts(TTCSI"s");
-	UCSR0B = (0<<RXEN0)|(0<<TXEN0);
-	delayLoop(10000);
-}
-
-const PSCallbacks animateStacking= {
-	enableUARTCallback,
-disableUARTCallback};
-//pcint16
-void enableReceiveFlag(){
-PCMSK2 = (1<<PCINT16);
-PCICR = (1<<PCIE2);
-}
-void disableReceiveFlag(){
-PCICR = 0x0;
-}
-void nullfunc(){
-	return;
-}
-//static PSCallbacks nullPS = {nullfunc,nullfunc};
-PSCallbacks LCDStacking = {enableReceiveFlag,disableReceiveFlag};
 int main(void) {
 	UCSR0B = (0<<RXEN0)|(0<<TXEN0);
 	UART_Init(103U);
 	Banner();
+	configOutputPin(&PORTC,5);
 	while (1) {
-		if(animate("Arvato",&animateStacking,&LCDStacking)){
-			asm("nop");
-		}
+		animate("Arvato",&animateStacking,&LCDStacking);
 	}
 }
