@@ -14,7 +14,7 @@
 #include "pinstacking.h"
 #include "termcontrol.h"
 #include <avr/io.h>
-void UART_Init( unsigned int ubrr)
+void UART_Init_Pinstacking( unsigned int ubrr)
 {
 	/*Set baud rate */
 	UBRR0H = (unsigned char)(ubrr>>8);
@@ -87,7 +87,7 @@ void LCD(void)  // Lite LCD demo
 {
 	const char uart_config_msg[] = "UART settings will be changed.  Change terra-term settings to 9600 baud, 2 stop bits, and 8 data bits.\n Press any key when terra-term settings are established to continue.";
 	UART_Puts(uart_config_msg);
-	UART_Init(103U);// set new uart settings
+	UART_Init_Pinstacking(103U);// set new uart settings
 	UART_Get();// wait for user input
 	while(1)
 	{
@@ -126,8 +126,7 @@ void LCD(void)  // Lite LCD demo
 	}
 
 	int main(void) {
-		UCSR0B = (0<<RXEN0)|(0<<TXEN0);
-		UART_Init(103U);
+		UART_Init_Pinstacking(103U);
 		Banner();
 		while(1){
 			Command();
