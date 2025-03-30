@@ -199,9 +199,9 @@ bool animateDelay() {
 // call takes ~4.25ms when drawing a frame, takes only 4.3us when only servicing
 // the timer
 
+static bool isInitialized = false;
 void animate(const char *str, const PSCallbacks *pinStacking,
              PSCallbacks *LCDStacking) {
-    static bool isInitialized = false;
     if (!isInitialized) {
         pinStacking->disable(); // disable any overlapping functions of the pins
                                 // used by animate
@@ -224,4 +224,27 @@ void animate(const char *str, const PSCallbacks *pinStacking,
         // poll the UART RX pins each time animate is called
         pollForUARTReceive();
     }
+}
+
+//clears a single row of the pixel buffer
+void clearPixelBufferRow(uint8_t *rowStart){
+	for(int i =0; i<ANIMATE_BUFFER_SIZE;i++){
+		rowStart[i] = 0;
+	}
+}
+
+//clears the pixel buffer
+void clearPixelBuffer(){
+	for(int i =0;i<8;i++){
+		clearPixelBufferRow(pixelBuffer[i]);
+	}	
+}
+
+//resets the globals used by the animate function
+void animateStop(){
+	isInitialized = false;
+	RXFlag = false;
+	drawLength = 0;
+	gapDrawLength = 0;
+	clearPixelBuffer();
 }
