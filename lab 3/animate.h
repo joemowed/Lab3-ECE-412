@@ -29,5 +29,6 @@
  * parameter but do not update the string within animate.*/
 void animate(const char *str, const PSCallbacks *pinStacking,
              PSCallbacks *LCDStacking);
-
+//resets the globals used by the animate function
+void animateStop();
 #endif /* ANIMATE_H_ */

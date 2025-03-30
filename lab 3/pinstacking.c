@@ -9,7 +9,7 @@
 #include "portAPI.h"
 #include "termcontrol.h"
 
-extern void UART_Init(unsigned int);    // defined in main.c
+extern void UARTInitPS(unsigned int);    // defined in main.c
 extern void UART_Puts(const char *str); // defined in main.c
 
 bool RXFlag = false; // global flag
@@ -40,7 +40,7 @@ void delayLoop(uint16_t cnt) {
  * the screen.  This deletes any garbage data sent to the terminal by the writes
  * to the LCD. */
 void enableUARTCallback() {
-    UART_Init(103U); // enable UART
+    UARTInitPS(103U); // enable UART
     // wait for any previous data sent to the terminal to be read by the
     // terminal
     delayLoop(UART_LOOP_DELAY_COUNT);
@@ -78,6 +78,18 @@ void enableReceiveFlag() {
     // poll the RX pin
     pollForUARTReceive();
     return;
+}
+
+void UARTInitPS( unsigned int ubrr)
+{
+	/*Set baud rate */
+	UBRR0H = (unsigned char)(ubrr>>8);
+	UBRR0L = (unsigned char)ubrr;
+		/* Set frame format: 8data, 2stop bit */
+	UCSR0C = (1<<USBS0)|(3<<UCSZ00);
+	/*	Enable receiver and transmitter */
+	UCSR0B = (1<<RXEN0)|(1<<TXEN0);
+
 }
 
 // callbacks used by the LCD class

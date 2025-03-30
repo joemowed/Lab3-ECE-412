@@ -34,4 +34,6 @@ const PSCallbacks animateStacking;
 // callbacks used by the LCD class for pinstacking
 PSCallbacks LCDStacking;
 
+//initialzes UART during shared usage with LCD
+void UARTInitPS(unsigned int);
 #endif /* PINSTACKING_H_ */

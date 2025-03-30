@@ -7,7 +7,7 @@
 
 #ifndef PROFILING_H_
 #define PROFILING_H_
-
+#include <stdint-gcc.h>
 // writes "0xDEAD" pattern to the stack, so that the stack usage level can be
 // determined by looking for pattern in memory inspector
 void __attribute__((constructor)) paintStack(void) { // run before main,

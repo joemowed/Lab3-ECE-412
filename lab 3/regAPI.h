@@ -26,4 +26,10 @@ extern void saveRegs();
 // restores all general purpose registers, defined in assembly file
 extern void restoreRegs();
 
+//wrapper for void functions, saves and restores registers
+inline void wrapASM(void(*asmFunction)(void)){
+	saveRegs();
+	asmFunction();
+	restoreRegs();
+}
 #endif /* REGAPI_H_ */
