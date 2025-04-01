@@ -18,7 +18,8 @@
 
 const char MS1[] = "\r\nECE-412 ATMega328PB Tiny OS";
 const char MS2[] = "\r\nby Eugene Rockey Copyright 2022, All Rights Reserved";
-const char MS3[] = "\r\nMenu: (L)CD, (A)DC, (W)Write EPROM, (R)Read EPROM, (U)SART\r\n";
+const char MS3[] =
+    "\r\nMenu: (L)CD, (A)DC, (W)Write EPROM, (R)Read EPROM, (U)SART\r\n";
 
 const char MS4[] = "\r\nReady: ";
 const char MS5[] = "\r\nInvalid Command Try Again...";
@@ -222,18 +223,18 @@ void ADC_Init_Free_Running(void) {
            (1 << ADPS1);
   ADCSRB = 0x00;  // Free-running mode
 }
-
 void ADC_Read(void) {
-  UART_Puts("\r\nTemperature (C): ");
-
+  UART_Puts("\r\nPress any key to exit.  \r\nTemperature (C): ");
   ADC_Init_Free_Running();  // Initialize ADC in free-running mode
-    _delay_ms(1000);
+  _delay_ms(1000);
+  UART_Puts("\r\n");  // insert newline for the temperature
   while (1) {
     // Proper ADC read for 10-bit value
     uint16_t adc_value = ADCW;  // Use ADCW instead of ADC
 
     if (adc_value == 0) {
-      UART_Puts("Error: ADC Value = 0\r\n");
+      UART_Puts("\rError: ADC Value = 0");
+
       continue;  // Prevent division by zero
     }
 
@@ -243,14 +244,21 @@ void ADC_Read(void) {
     sprintf(temp_str, "%.2f", temperature);
 
     // Display temperature on terminal
-    UART_Puts("\r\nTemp: ");
+    UART_Puts("\rTemp: ");
     UART_Puts(temp_str);
     UART_Puts(" C ");
 
     _delay_ms(1000);
 
     // Check for key press to exit
-    if (ASCII != '\0') return;
+    if (READ_BIT(UCSR0A,RXC0)) {  // checks if new data has been received in UART
+      wrapASM(UART_Get);   // clear the UART data register
+      ASCII =
+          '\0';  // clear the global flag before returning to the command loop
+      return;
+    }
+	// overwrite the current line with spaces
+    UART_Puts("\r                      "); 
   }
 }
 void WEEPROM(void) {
@@ -290,19 +298,18 @@ void Command(void)  // command interpreter
       LCD();
       break;
 
-
     case 'A':
     case 'a':
       ADC_Read();
       break;
 
-	case 'U':
-	case 'u':
+    case 'U':
+    case 'u':
       USART();
       break;
 
-	case 'W':
-	case 'w':
+    case 'W':
+    case 'w':
       UART_Puts(MS_enter_addr);
       ASCII = '\0';
       while (ASCII == '\0') {
@@ -318,9 +325,8 @@ void Command(void)  // command interpreter
       WEEPROM();
       break;
 
-
-	case 'R':
-	case 'r':
+    case 'R':
+    case 'r':
       UART_Puts(MS_enter_addr);
       ASCII = '\0';
       while (ASCII == '\0') {
@@ -330,7 +336,6 @@ void Command(void)  // command interpreter
       REEPROM();
       break;
 
-
     default:
       UART_Puts(MS5);
       HELP();
@@ -339,7 +344,7 @@ void Command(void)  // command interpreter
 }
 int main(void) {
   wrapASM(Mega328P_Init);
-  UARTInitPS(103U); //start with the UART as 9600 baud, 2 stop bits, no parity
+  UARTInitPS(103U);  // start with the UART as 9600 baud, 2 stop bits, no parity
   Banner();
   while (1) {
     Command();  // infinite command loop

@@ -139,6 +139,7 @@
   <avrgcc.compiler.warnings.Undefined>True</avrgcc.compiler.warnings.Undefined>
   <avrgcc.compiler.warnings.Pedantic>True</avrgcc.compiler.warnings.Pedantic>
   <avrgcc.compiler.warnings.PedanticWarningsAsErrors>True</avrgcc.compiler.warnings.PedanticWarningsAsErrors>
+  <avrgcc.compiler.miscellaneous.OtherFlags>-std=gnu99 -DF_CPU=16000000</avrgcc.compiler.miscellaneous.OtherFlags>
   <avrgcc.linker.libraries.Libraries>
     <ListValues>
       <Value>libm</Value>
