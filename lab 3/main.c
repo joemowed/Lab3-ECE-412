@@ -195,32 +195,30 @@ void USART(void) {
   }
 }
 
-float NTC_Temperature(uint16_t adc_value) 
-{
+float NTC_Temperature(uint16_t adc_value) {
   // Constants for 10K NTC Thermistor
   const float BETA = 3950.0;    // Beta value
   const float R_REF = 10000.0;  // Reference resistance
-  const float T_REF = 298.15;   // Reference temperature in Kelvin
+  const float T_REF = 298.15;   // Reference temperature in Kelvin 
   const float R_INFINITY = R_REF * exp(-BETA / T_REF);
 
   // Calculate the resistance of the thermistor
   float resistance = (1023.0 / adc_value - 1.0) * R_REF;
 
-  // Calculate temperature in Kelvin and convert to Celsius
+  // Calculate temp in kelvin and convert to celsius
   float temperature_kelvin = BETA / (log(resistance / R_INFINITY));
   float temperature_celsius = temperature_kelvin - 273.15;
 
   return temperature_celsius;
 }
 
-void ADC_Init_Free_Running(void)
- {
+void ADC_Init_Free_Running(void) {
   // Configure ADC for free-running mode
   ADMUX =  (1 << REFS0);    // Reference voltage = AVCC, input channel = ADC0
   ADCSRA = (1 << ADEN)  |   // Enable ADC
            (1 << ADATE) |   // Enable auto-trigger (free-running mode)
            (1 << ADSC)  |   // Start conversion
-           (1 << ADPS2) |    
+           (1 << ADPS2) |   // ADC clock = 16MHz
            (1 << ADPS1);
   ADCSRB = 0x00;  // Free-running mode
 }
@@ -231,7 +229,7 @@ void ADC_Read(void) {
   UART_Puts("\r\n");        // insert newline for the temperature
   while (1) {
     // Proper ADC read for 10-bit value
-    uint16_t adc_value = ADCW;  
+    uint16_t adc_value = ADCW;  // Reads ADC value from ADCW
 
        // Prevent division by zero
     if (adc_value == 0) {
@@ -240,10 +238,10 @@ void ADC_Read(void) {
     }
 	else{
 
-    volatile float temperature = NTC_Temperature(adc_value);
+    volatile float temperature = NTC_Temperature(adc_value); // Converts ADC value to celsius temp
 
     char temp_str[10];
-    sprintf(temp_str, "%.2f", temperature);
+    sprintf(temp_str, "%.2f", temperature); // Makes temp a string and up to 2 decimal places
 
     // Display temperature on terminal
     UART_Puts("\rTemp: ");
@@ -263,6 +261,7 @@ void ADC_Read(void) {
     UART_Puts("\r                      "); 
   }
 }
+
 void WEEPROM(void) {
   UART_Puts("\r\nEEPROM Write.");
   /*
