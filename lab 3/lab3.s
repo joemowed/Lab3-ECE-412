@@ -209,8 +209,9 @@ EEPROM_Read:
 .global UART_Stop
 UART_Stop:
 		lds		r16, UCSR0C
-		sbic    DATA,0
-		rjmp	UART_StopClear
+		lds		r17, DATA
+		cpi     r17, 0x00
+		breq	UART_StopClear
 		SBR		r16, 8
 		sts		UCSR0C, r16
 		ret
@@ -221,8 +222,9 @@ UART_StopClear:
 .global UART_Parity
 UART_Parity:
 		lds		r16, UCSR0C
-		sbis    DATA,0
-		rjmp	UART_ParityClear
+		lds		r17, DATA
+		cpi		r17, 0x01
+		breq	UART_ParityClear
 		SBR		r16, 32
 		sts		UCSR0C, r16
 		ret
@@ -234,24 +236,21 @@ UART_ParityClear:
 UART_Bits:
 		lds		r16, UCSR0C
 		lds		r17, UCSR0B
-		sbic    DATA, 2
-		rjmp	UART_bits2
-		sbic    DATA, 1
-		rjmp	UART_bits2
-		sbic    DATA, 0
-		rjmp	UART_bits2
+		lds		r18, DATA
+		cpi		r18,0x01
+		breq	UART_bits3
+		cpi		r18,0x02
+		breq	UART_bits2
+		cpi		r18,0x03
+		breq	UART_bits4
+		cpi		r18,0x04
+		breq	UART_bits5
 		CBR		r16, 6
 		CBR		r17, 4
 		sts		UCSR0C, r16
 		sts		UCSR0B, r17
 		ret
 UART_bits2:
-		sbic    DATA, 2
-		rjmp	UART_bits3
-		sbic    DATA, 1
-		rjmp	UART_bits3
-		sbis    DATA, 0
-		rjmp	UART_bits3
 		SBR		r16, 4
 		CBR		r16, 2
 		CBR		r17, 4
@@ -259,12 +258,6 @@ UART_bits2:
 		sts		UCSR0B, r17
 		ret
 UART_bits3:
-		sbic    DATA, 2
-		rjmp	UART_bits4
-		sbis    DATA, 1
-		rjmp	UART_bits4
-		sbic    DATA, 0
-		rjmp	UART_bits4
 		CBR		r16, 4
 		SBR		r16, 2
 		CBR		r17, 4
@@ -272,12 +265,6 @@ UART_bits3:
 		sts		UCSR0B, r17
 		ret
 UART_bits4:
-		sbic    DATA, 2
-		rjmp	UART_bits5
-		sbis    DATA, 1
-		rjmp	UART_bits5
-		sbis    DATA, 0
-		rjmp	UART_bits5
 		SBR		r16, 6
 		CBR		r17, 4
 		sts		UCSR0C, r16
@@ -292,18 +279,20 @@ UART_bits5:
 		ret
 .global UART_Baud
 UART_Baud:
-		sbis    DATA,0
-		rjmp	UART_BaudClear
-		ldi		r16, 0x80
-		ldi		r17, 0x25
+		lds		r18, DATA
+		cpi    r18, 0
+		breq	UART_BaudClear
+		ldi		r16, 0x67
+		//ldi		r17, 0x25
 		sts		UBRR0L, r16
-		sts		UBRR0H, r17
+		//sts		UBRR0H, r17
 		ret
 UART_BaudClear:
-		ldi		r16, 0xC0
-		ldi		r17, 0x12
+		ldi		r16, 0xCF
+		//ldi		r17, 0x12
 		sts		UBRR0L, r16
-		sts		UBRR0H, r17
+		//sts		UBRR0H, r17
 		ret
-		.end
 
+
+		.end
