@@ -1,31 +1,19 @@
-
-// Lab3P1.c
-//
-//
-// Author : Eugene Rockey
-//
-
-//
-
 #include <avr/io.h>
 #include <math.h>
 #include <stdio.h>
 #include <util/delay.h>
-
 #include "animate.h"
 #include "pinstacking.h"
 #include "regAPI.h"
 
 const char MS1[] = "\r\nECE-412 ATMega328PB Tiny OS";
 const char MS2[] = "\r\nby Eugene Rockey Copyright 2022, All Rights Reserved";
-const char MS3[] =
-    "\r\nMenu: (L)CD, (A)DC, (W)Write EPROM, (R)Read EPROM, (U)SART\r\n";
-
+const char MS3[] = "\r\nMenu: (L)CD, (A)DC, (W)Write EPROM, (R)Read EPROM, (U)SART\r\n";
 const char MS4[] = "\r\nReady: ";
 const char MS5[] = "\r\nInvalid Command Try Again...";
 const char MS6[] = "Volts\r";
-const char MS7[] =
-    "\r\n change: (1)baud rate, (2)# of bits, (3) parity, (4) # stop bits\r\n";
+
+const char MS7[] = "\r\n change: (1)baud rate, (2)# of bits, (3) parity, (4) # stop bits\r\n";
 const char MS8[] = "\r\n baud rate: (1) 4800 or (2) 9600\r\n";
 const char MS9[] = "\r\n # of bits: (5), (6), (7), (8), (9)\r\n";
 const char MS10[] = "\r\n parity: (E)nabled,even or (d)isabled\r\n";
@@ -47,6 +35,7 @@ void ADC_Get(void);
 
 void EEPROM_Read(void);
 void EEPROM_Write(void);
+
 void UART_Stop(void);
 void UART_Parity(void);
 void UART_Bits(void);
@@ -54,9 +43,11 @@ void UART_Baud(void);
 
 unsigned char ASCII;  // shared I/O variable with Assembly
 unsigned char DATA;   // shared internal variable with Assembly
+
 char HADC;            // shared ADC variable with Assembly
 char LADC;            // shared ADC variable with Assembly
-unsigned char byte;
+
+unsigned char byte;  //shared with assembly for EEPROM
 
 char volts[5];  // string buffer for ADC output
 int Acc;        // Accumulator for ADC use
@@ -74,6 +65,7 @@ void Banner(void)  // Display Tiny OS Banner on Terminal
   UART_Puts(MS1);
   UART_Puts(MS2);
   UART_Puts(MS4);
+  UART_Puts(MS3);
 }
 
 void HELP(void)  // Display available Tiny OS Commands on Terminal
@@ -89,16 +81,21 @@ void LCD(void)  // Lite LCD demo
       "bits.\r\n"
       "Press any key when terra-term settings are established to continue.\r\n"
       "Press any key to exit the animation and return to command line.\r\n";
-  UART_Puts(uart_config_msg);
+
+  UART_Puts(uart_config_msg); // send the message to terra term
   UARTInitPS(103U);   // set new uart settings
   wrapASM(UART_Get);  // wait for user input
-  RXFlag = false;
+  RXFlag = false; //reset the uart received during animation flag
+  UART_Puts("\r\n");//put cursor on empty line
   while (1) {
     if (RXFlag) {
-      break;
+	//stop animating if the user has pressed a key
+      break; 
     }
+	//do the animation, sets RXFlag if the user presses a key
     animate("The Bug Busters", &animateStacking, &LCDStacking);
   }
+  //reset all the globals used by animate()
   animateStop();
   return;
 }
@@ -238,7 +235,7 @@ void ADC_Read(void) {
     }
 	else{
 
-    volatile float temperature = NTC_Temperature(adc_value); // Converts ADC value to celsius temp
+    volatile float temperature = NTC_Temperature(adc_value); // Converts ADC value to Celsius temp
 
     char temp_str[10];
     sprintf(temp_str, "%.2f", temperature); // Makes temp a string and up to 2 decimal places
