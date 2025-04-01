@@ -195,12 +195,11 @@ void USART(void) {
   }
 }
 
-float NTC_Temperature(uint16_t adc_value) 
-{
-  // Constants for 10K NTC Thermistor
+float NTC_Temperature(uint16_t adc_value) {
+  // Constants for 10K NTC Thermistor with B3950
   const float BETA = 3950.0;    // Beta value
   const float R_REF = 10000.0;  // Reference resistance
-  const float T_REF = 298.15;   // Reference temperature in Kelvin
+  const float T_REF = 298.15;   // Reference temperature in Kelvin (25 �C)
   const float R_INFINITY = R_REF * exp(-BETA / T_REF);
 
   // Calculate the resistance of the thermistor
@@ -213,14 +212,14 @@ float NTC_Temperature(uint16_t adc_value)
   return temperature_celsius;
 }
 
-void ADC_Init_Free_Running(void)
- {
+void ADC_Init_Free_Running(void) {
   // Configure ADC for free-running mode
-  ADMUX =  (1 << REFS0);    // Reference voltage = AVCC, input channel = ADC0
-  ADCSRA = (1 << ADEN)  |   // Enable ADC
-           (1 << ADATE) |   // Enable auto-trigger (free-running mode)
-           (1 << ADSC)  |   // Start conversion
-           (1 << ADPS2) |    
+  ADMUX = (1 << REFS0);    // Reference voltage = AVCC, input channel = ADC0
+  ADCSRA = (1 << ADEN) |   // Enable ADC
+           (1 << ADATE) |  // Enable auto-trigger (free-running mode)
+           (1 << ADSC) |   // Start conversion
+           (1 << ADPS2) |  // Prescaler = 64 for 125 kHz ADC clock (with 8 MHz
+           // system clock)
            (1 << ADPS1);
   ADCSRB = 0x00;  // Free-running mode
 }
@@ -228,10 +227,10 @@ void ADC_Read(void) {
   UART_Puts("\r\nPress any key to exit.  \r\nTemperature (C): ");
   ADC_Init_Free_Running();  // Initialize ADC in free-running mode
   _delay_ms(1000);
-  UART_Puts("\r\n");        // insert newline for the temperature
+  UART_Puts("\r\n");  // insert newline for the temperature
   while (1) {
     // Proper ADC read for 10-bit value
-    uint16_t adc_value = ADCW;  
+    uint16_t adc_value = ADCW;  // Use ADCW instead of ADC
 
        // Prevent division by zero
     if (adc_value == 0) {
@@ -287,7 +286,7 @@ void REEPROM(void) {
   UART_Puts("\r\n");
 }
 
-void Command(void)  
+void Command(void)  // command interpreter
 {
   UART_Puts(MS3);
   ASCII = '\0';
