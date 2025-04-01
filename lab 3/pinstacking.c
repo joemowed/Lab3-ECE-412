@@ -44,6 +44,7 @@ void enableUARTCallback() {
     // wait for any previous data sent to the terminal to be read by the
     // terminal
     delayLoop(UART_LOOP_DELAY_COUNT);
+	//this is the largest gap in polling, at 5.83ms between the delayLoop() calls
     // restore the cursor to the saved position
     UART_Puts(TTCSI "u");
     // delete from the cursor to the bottom of terminal
