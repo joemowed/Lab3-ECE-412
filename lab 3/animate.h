@@ -12,7 +12,7 @@
 
 // buffer size in chars, 8 (or less) chars are used for spaces on the marquee
 // (e.g. 20-8= 16 char string max)
-#define ANIMATE_BUFFER_SIZE 120
+#define ANIMATE_BUFFER_SIZE 60
 
 // the total frame delay is this number * 4 (e.g. ANIMATE_DELAY =30, frame delay
 // will be 30*4 = 120 milliseconds (8.3FPS)
