@@ -83,7 +83,7 @@ void HELP(void)  // Display available Tiny OS Commands on Terminal
 void LCD(void)  // Lite LCD demo
 {
   const char uart_config_msg[] =
-      "UART settings will be changed."
+      "UART settings will be changed.  "
       "Change terra-term settings to 9600 baud, 2 stop bits, and 8 data "
       "bits.\r\n"
       "Press any key when terra-term settings are established to continue.\r\n"
